@@ -1,7 +1,7 @@
 ﻿using AirportTicketBookingSystem.Interfaces;
 
-namespace AirportTicketBookingSystem.Models
-{
+namespace AirportTicketBookingSystem.Models;
+
     public class Booking
     {
         public Flight Flight { get; set; }
@@ -21,4 +21,4 @@ namespace AirportTicketBookingSystem.Models
         }
 
     }
-}
+

@@ -1,6 +1,6 @@
 ﻿
-namespace AirportTicketBookingSystem.Models
-{
+namespace AirportTicketBookingSystem.Models;
+
     public class Manager
     {
         public string FullName { get; set; }
@@ -13,4 +13,4 @@ namespace AirportTicketBookingSystem.Models
         }
 
     }
-}
+

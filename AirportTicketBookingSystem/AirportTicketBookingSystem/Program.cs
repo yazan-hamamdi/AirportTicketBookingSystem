@@ -1,6 +1,4 @@
 ﻿
-using AirportTicketBookingSystem.Interfaces;
-
 namespace AirportTicketBookingSystem
 {
     internal class Program

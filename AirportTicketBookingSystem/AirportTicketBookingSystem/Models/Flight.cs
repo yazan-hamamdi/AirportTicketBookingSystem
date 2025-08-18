@@ -1,6 +1,6 @@
 ﻿
-namespace AirportTicketBookingSystem.Models
-{
+namespace AirportTicketBookingSystem.Models;
+
     public class Flight
     {
         public string DepartureCountry { get; set; }
@@ -9,6 +9,7 @@ namespace AirportTicketBookingSystem.Models
         public string ArrivalAirport { get; set; }
         public DateTime DepartureDate { get; set; }
         public List<Booking> Bookings { get; private set; } = new();
+
         public Flight(string departureCountry, string destinationCountry, string departureAirport,
             string arrivalAirport, DateTime departureDate, List<Booking> bookings)
         {
@@ -21,4 +22,4 @@ namespace AirportTicketBookingSystem.Models
         }
 
     }
-}
+

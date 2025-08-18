@@ -1,11 +1,11 @@
 ﻿
 using AirportTicketBookingSystem.Enums;
 
-namespace AirportTicketBookingSystem.Interfaces
-{
+namespace AirportTicketBookingSystem.Interfaces;
+
     public interface ISeatClass
     {
-        Class Name { get; }
+        TravelClass Name { get; }
         decimal CalculatePrice(decimal basePrice);
     }
-}
+
