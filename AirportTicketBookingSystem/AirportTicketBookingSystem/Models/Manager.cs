@@ -5,7 +5,9 @@ namespace AirportTicketBookingSystem.Models;
     {
         public int Id { get; set; }
         public string FullName { get; set; }
-        public List<Flight> Flights { get; private set; } = new();
+        public List<Flight> Flights { get; set; } = new();
+
+        public Manager() { }
 
         public Manager(int id, string fullName, List<Flight> flights)
         {
@@ -14,5 +16,5 @@ namespace AirportTicketBookingSystem.Models;
             Flights = flights;
         }
 
-    }
+}
 
