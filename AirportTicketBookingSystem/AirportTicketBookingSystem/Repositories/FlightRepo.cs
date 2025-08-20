@@ -65,21 +65,6 @@ namespace AirportTicketBookingSystem.Repositories
             Save(records);
         }
 
-        public void DeleteWhere(Func<Flight, bool> predicate)
-        {
-            if (predicate == null)
-                throw new ArgumentNullException(nameof(predicate));
-
-            var records = GetAll();
-            var flightsToDelete = records.Where(predicate).ToList();
-
-            if (!flightsToDelete.Any())
-                throw new KeyNotFoundException("Flight not found to delete");
-
-            records.RemoveAll(f => predicate(f));
-            Save(records);
-        }
-
         public void Update(Func<Flight, bool> predicate, Flight newFlight)
         {
             if (predicate is null) throw new ArgumentNullException(nameof(predicate));

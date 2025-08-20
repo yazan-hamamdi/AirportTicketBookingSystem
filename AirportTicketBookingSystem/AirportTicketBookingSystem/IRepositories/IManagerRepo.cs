@@ -9,7 +9,6 @@ namespace AirportTicketBookingSystem.IRepositories
         List<Manager> GetAll();
         void Add(Manager manager);
         void Update(Func<Manager, bool> predicate, Manager newManager);
-        void DeleteWhere(Func<Manager, bool> predicate);
     }
 
 }

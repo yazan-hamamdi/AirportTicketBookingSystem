@@ -63,21 +63,6 @@ namespace AirportTicketBookingSystem.Repositories
             Save(records);
         }
 
-        public void DeleteWhere(Func<Manager, bool> predicate)
-        {
-            if (predicate == null)
-                throw new ArgumentNullException(nameof(predicate));
-
-            var allManagers = GetAll();
-            var managersToDelete = allManagers.Where(predicate).ToList();
-
-            if (!managersToDelete.Any())
-                throw new KeyNotFoundException("No manager found to delete");
-
-            allManagers.RemoveAll(m => predicate(m));
-            Save(allManagers);
-        }
-
         public void Update(Func<Manager, bool> predicate, Manager newManager)
         {
             if (predicate is null) throw new ArgumentNullException(nameof(predicate));

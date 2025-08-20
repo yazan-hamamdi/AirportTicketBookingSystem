@@ -9,6 +9,5 @@ namespace AirportTicketBookingSystem.IRepositories
         List<Flight> GetAll();
         void Add(Flight flight);
         void Update(Func<Flight, bool> predicate, Flight newFlight);
-        void DeleteWhere(Func<Flight, bool> predicate);
     }
 }
