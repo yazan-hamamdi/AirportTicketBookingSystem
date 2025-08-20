@@ -17,6 +17,18 @@ namespace AirportTicketBookingSystem.Repositories
             _bookingRepo = bookingRepo;
         }
 
+        public Flight GetFlightById(int id)
+        {
+            var flightRecords = GetAll();
+            var selectedFlight = flightRecords.FirstOrDefault(b => b.Id == id);
+
+            if (selectedFlight != null)
+            {
+                return selectedFlight;
+            }
+            throw new KeyNotFoundException($"Flight with Id {id} was not found");
+        }
+
         public List<Flight> GetAll()
         {
             if (!File.Exists(_filePath))

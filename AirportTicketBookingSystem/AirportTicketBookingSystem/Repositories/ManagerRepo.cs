@@ -17,6 +17,18 @@ namespace AirportTicketBookingSystem.Repositories
             _flightRepo = flightRepo;
         }
 
+        public Manager GetManagerById(int id)
+        {
+            var managerRecords = GetAll();
+            var selectedManager = managerRecords.FirstOrDefault(b => b.Id == id);
+
+            if (selectedManager != null)
+            {
+                return selectedManager;
+            }
+            throw new KeyNotFoundException($"Manager with Id {id} was not found");
+        }
+
         public List<Manager> GetAll()
         {
             if (!File.Exists(_filePath))
