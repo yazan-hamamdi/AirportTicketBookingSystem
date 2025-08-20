@@ -9,24 +9,32 @@ namespace AirportTicketBookingSystem.Repositories
     public class FlightRepo : IFlightRepo
     {
         private readonly string _filePath;
-        private readonly BookingRepo _bookingRepo;
 
-        public FlightRepo(string filePath, BookingRepo bookingRepo)
+        public FlightRepo(string filePath)
         {
             _filePath = filePath;
-            _bookingRepo = bookingRepo;
         }
 
-        public Flight GetFlightById(int id)
+        public Flight GetById(int id)
         {
             var flightRecords = GetAll();
             var selectedFlight = flightRecords.FirstOrDefault(b => b.Id == id);
 
-            if (selectedFlight != null)
-            {
-                return selectedFlight;
-            }
-            throw new KeyNotFoundException($"Flight with Id {id} was not found");
+            return selectedFlight ?? throw new KeyNotFoundException($"Flight with Id {id} was not found");
+            
+        }
+
+        public void DeleteById(int id)
+        {
+            var flightRecords = GetAll();
+            var selectedFlight = flightRecords.FirstOrDefault(b => b.Id == id);
+
+            if (selectedFlight == null)
+                throw new KeyNotFoundException($"Flight with Id {id} was not found");
+
+            flightRecords.Remove(selectedFlight);
+
+            Save(flightRecords);
         }
 
         public List<Flight> GetAll()
@@ -42,19 +50,6 @@ namespace AirportTicketBookingSystem.Repositories
             });
 
             var flights = csv.GetRecords<Flight>().ToList();
-            var allBookings = _bookingRepo.GetAll();
-
-            var bookingsByFlight = allBookings
-                .GroupBy(b => b.FlightId)
-                .ToDictionary(g => g.Key, g => g.ToList());
-
-            foreach (var flight in flights)
-            {
-                if (bookingsByFlight.TryGetValue(flight.Id, out var bookings))
-                {
-                    flight.Bookings = bookings;
-                }
-            }
 
             return flights;
         }
@@ -68,14 +63,9 @@ namespace AirportTicketBookingSystem.Repositories
             records.Add(flight);
 
             Save(records);
-
-            if (flight.Bookings.Count > 0)
-            {
-                flight.Bookings.ForEach(_bookingRepo.Add);
-            }
         }
 
-        public void DeleteAll(Func<Flight, bool> predicate)
+        public void DeleteWhere(Func<Flight, bool> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
@@ -84,15 +74,10 @@ namespace AirportTicketBookingSystem.Repositories
             var flightsToDelete = records.Where(predicate).ToList();
 
             if (!flightsToDelete.Any())
-                throw new InvalidOperationException("No flight found to delete");
+                throw new KeyNotFoundException("Flight not found to delete");
 
             records.RemoveAll(f => predicate(f));
             Save(records);
-
-            foreach (var flight in flightsToDelete)
-            {
-                _bookingRepo.DeleteAll(b => b.FlightId == flight.Id);
-            }
         }
 
         public void Update(Func<Flight, bool> predicate, Flight newFlight)
@@ -104,15 +89,10 @@ namespace AirportTicketBookingSystem.Repositories
             var index = records.FindIndex(r => predicate(r));
 
             if (index < 0)
-                throw new InvalidOperationException("Flight not found to update");
+                throw new KeyNotFoundException("Flight not found to update");
 
             records[index] = newFlight;
             Save(records);
-
-            foreach (var booking in newFlight.Bookings)
-            {
-                _bookingRepo.Update(b => b.Id == booking.Id, booking);
-            }
         }
 
         private void Save(List<Flight> flights)

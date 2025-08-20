@@ -21,11 +21,20 @@ namespace AirportTicketBookingSystem.Repositories
             var bookingRecords = GetAll();
             var selectedBooking = bookingRecords.FirstOrDefault(b => b.Id == id);
 
-            if (selectedBooking != null)
-            {
-                return selectedBooking;
-            }
-            throw new KeyNotFoundException($"Booking with Id {id} was not found");
+            return selectedBooking ?? throw new KeyNotFoundException($"Booking with Id {id} was not found.");
+        }
+
+        public void DeleteById(int id)
+        {
+            var bookingRecords = GetAll();
+            var selectedBooking = bookingRecords.FirstOrDefault(b => b.Id == id);
+
+            if (selectedBooking == null)
+                throw new KeyNotFoundException($"Booking with Id {id} was not found");
+
+            bookingRecords.Remove(selectedBooking);
+
+            Save(bookingRecords);
         }
 
         public List<Booking> GetAll()
@@ -40,9 +49,7 @@ namespace AirportTicketBookingSystem.Repositories
                 MissingFieldFound = null
             });
 
-            var bookingRecords = csv.GetRecords<BookingCsv>().ToList();
-
-            return bookingRecords.Select(r => new Booking(
+            return csv.GetRecords<BookingCsv>().Select(r => new Booking(
                 r.Id,
                 r.FlightId,
                 r.PassengerId,
@@ -63,7 +70,7 @@ namespace AirportTicketBookingSystem.Repositories
             Save(bookingRecords);
         }
 
-        public void DeleteAll(Func<Booking, bool> predicate)
+        public void DeleteWhere(Func<Booking, bool> predicate)
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
@@ -71,7 +78,7 @@ namespace AirportTicketBookingSystem.Repositories
             var removedCount = bookingRecords.RemoveAll(r => predicate(r));
 
             if (removedCount == 0)
-                throw new InvalidOperationException("No booking found to delete");
+              throw new KeyNotFoundException("No booking found to delete");
 
             Save(bookingRecords);
         }
@@ -85,7 +92,7 @@ namespace AirportTicketBookingSystem.Repositories
             var index = bookingRecords.FindIndex(r => predicate(r));
 
             if (index < 0)
-                throw new InvalidOperationException("Booking not found to update");
+               throw new KeyNotFoundException("Booking not found to update");
 
             bookingRecords[index] = newBooking;
             Save(bookingRecords);
