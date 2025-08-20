@@ -15,17 +15,17 @@ namespace AirportTicketBookingSystem.Repositories
             _filePath = filePath;
         }
 
-        public Manager GetById(int id)
+        public Manager GetManagerById(int id)
         {
-            var managerRecords = GetAll();
+            var managerRecords = GetAllManagers();
             var selectedManager = managerRecords.FirstOrDefault(b => b.Id == id);
 
             return selectedManager ?? throw new KeyNotFoundException($"Manager with Id {id} was not found");  
         }
 
-        public void DeleteById(int id)
+        public void DeleteManager(int id)
         {
-            var managerRecords = GetAll();
+            var managerRecords = GetAllManagers();
             var selectedManager = managerRecords.FirstOrDefault(b => b.Id == id);
 
             if (selectedManager == null)
@@ -36,7 +36,7 @@ namespace AirportTicketBookingSystem.Repositories
             Save(managerRecords);
         }
 
-        public List<Manager> GetAll()
+        public List<Manager> GetAllManagers()
         {
             if (!File.Exists(_filePath))
                 throw new FileNotFoundException("CSV file not found", _filePath);
@@ -53,22 +53,22 @@ namespace AirportTicketBookingSystem.Repositories
             return managers;
         }
 
-        public void Add(Manager manager)
+        public void AddManager(Manager manager)
         {
             if (manager == null)
                 throw new ArgumentNullException(nameof(manager));
 
-            var records = GetAll();
+            var records = GetAllManagers();
             records.Add(manager);
             Save(records);
         }
 
-        public void Update(Func<Manager, bool> predicate, Manager newManager)
+        public void UpdateManager(Func<Manager, bool> predicate, Manager newManager)
         {
             if (predicate is null) throw new ArgumentNullException(nameof(predicate));
             if (newManager is null) throw new ArgumentNullException(nameof(newManager));
 
-            var records = GetAll();
+            var records = GetAllManagers();
             var index = records.FindIndex(r => predicate(r));
 
             if (index < 0)

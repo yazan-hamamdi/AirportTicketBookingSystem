@@ -16,17 +16,17 @@ namespace AirportTicketBookingSystem.Repositories
             _filePath = filePath;
         }
 
-        public Booking GetById(int id)
+        public Booking GetBookingById(int id)
         {
-            var bookingRecords = GetAll();
+            var bookingRecords = GetAllBookings();
             var selectedBooking = bookingRecords.FirstOrDefault(b => b.Id == id);
 
             return selectedBooking ?? throw new KeyNotFoundException($"Booking with Id {id} was not found.");
         }
 
-        public void DeleteById(int id)
+        public void DeleteBooking(int id)
         {
-            var bookingRecords = GetAll();
+            var bookingRecords = GetAllBookings();
             var selectedBooking = bookingRecords.FirstOrDefault(b => b.Id == id);
 
             if (selectedBooking == null)
@@ -37,7 +37,7 @@ namespace AirportTicketBookingSystem.Repositories
             Save(bookingRecords);
         }
 
-        public List<Booking> GetAll()
+        public List<Booking> GetAllBookings()
         {
             if (!File.Exists(_filePath))
                 throw new FileNotFoundException("CSV file not found", _filePath);
@@ -60,22 +60,22 @@ namespace AirportTicketBookingSystem.Repositories
             )).ToList();
         }
 
-        public void Add(Booking booking)
+        public void AddBooking(Booking booking)
         {
             if (booking == null)
                 throw new ArgumentNullException(nameof(booking));
 
-            var bookingRecords = GetAll();
+            var bookingRecords = GetAllBookings();
             bookingRecords.Add(booking);
             Save(bookingRecords);
         }
 
-        public void Update(Func<Booking, bool> predicate, Booking newBooking)
+        public void UpdateBooking(Func<Booking, bool> predicate, Booking newBooking)
         {
             if (predicate is null) throw new ArgumentNullException(nameof(predicate));
             if (newBooking is null) throw new ArgumentNullException(nameof(newBooking));
 
-            var bookingRecords = GetAll();
+            var bookingRecords = GetAllBookings();
             var index = bookingRecords.FindIndex(r => predicate(r));
 
             if (index < 0)

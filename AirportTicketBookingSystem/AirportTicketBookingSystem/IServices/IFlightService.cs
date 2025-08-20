@@ -1,8 +1,8 @@
 ﻿using AirportTicketBookingSystem.Models;
 
-namespace AirportTicketBookingSystem.IRepositories
+namespace AirportTicketBookingSystem.IServices
 {
-    public interface IFlightRepo
+    public interface IFlightService
     {
         public Flight GetFlightById(int id);
         void DeleteFlight(int id);

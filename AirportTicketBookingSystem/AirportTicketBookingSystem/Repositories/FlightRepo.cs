@@ -15,18 +15,18 @@ namespace AirportTicketBookingSystem.Repositories
             _filePath = filePath;
         }
 
-        public Flight GetById(int id)
+        public Flight GetFlightById(int id)
         {
-            var flightRecords = GetAll();
+            var flightRecords = GetAllFlights();
             var selectedFlight = flightRecords.FirstOrDefault(b => b.Id == id);
 
             return selectedFlight ?? throw new KeyNotFoundException($"Flight with Id {id} was not found");
             
         }
 
-        public void DeleteById(int id)
+        public void DeleteFlight(int id)
         {
-            var flightRecords = GetAll();
+            var flightRecords = GetAllFlights();
             var selectedFlight = flightRecords.FirstOrDefault(b => b.Id == id);
 
             if (selectedFlight == null)
@@ -37,7 +37,7 @@ namespace AirportTicketBookingSystem.Repositories
             Save(flightRecords);
         }
 
-        public List<Flight> GetAll()
+        public List<Flight> GetAllFlights()
         {
             if (!File.Exists(_filePath))
                 throw new FileNotFoundException("CSV file not found", _filePath);
@@ -54,23 +54,23 @@ namespace AirportTicketBookingSystem.Repositories
             return flights;
         }
 
-        public void Add(Flight flight)
+        public void AddFlight(Flight flight)
         {
             if (flight == null)
                 throw new ArgumentNullException(nameof(flight));
 
-            var records = GetAll();
+            var records = GetAllFlights();
             records.Add(flight);
 
             Save(records);
         }
 
-        public void Update(Func<Flight, bool> predicate, Flight newFlight)
+        public void UpdateFlight(Func<Flight, bool> predicate, Flight newFlight)
         {
             if (predicate is null) throw new ArgumentNullException(nameof(predicate));
             if (newFlight is null) throw new ArgumentNullException(nameof(newFlight));
 
-            var records = GetAll();
+            var records = GetAllFlights();
             var index = records.FindIndex(r => predicate(r));
 
             if (index < 0)

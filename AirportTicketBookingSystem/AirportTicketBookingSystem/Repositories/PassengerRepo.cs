@@ -15,17 +15,17 @@ namespace AirportTicketBookingSystem.Repositories
             _filePath = filePath;
         }
 
-        public Passenger GetById(int id)
+        public Passenger GetPassengerById(int id)
         {
-            var passengerRecords = GetAll();
+            var passengerRecords = GetAllPassengers();
             var selectedPassenger = passengerRecords.FirstOrDefault(b => b.Id == id);
 
            return selectedPassenger ?? throw new KeyNotFoundException($"Passenger with Id {id} was not found");      
         }
 
-        public void DeleteById(int id)
+        public void DeletePassenger(int id)
         {
-            var passengerRecords = GetAll();
+            var passengerRecords = GetAllPassengers();
             var selectedPassenger = passengerRecords.FirstOrDefault(b => b.Id == id);
 
             if (selectedPassenger == null)
@@ -36,7 +36,7 @@ namespace AirportTicketBookingSystem.Repositories
             Save(passengerRecords);
         }
 
-        public List<Passenger> GetAll()
+        public List<Passenger> GetAllPassengers()
         {
             if (!File.Exists(_filePath))
                 throw new FileNotFoundException("CSV file not found", _filePath);
@@ -53,23 +53,23 @@ namespace AirportTicketBookingSystem.Repositories
             return passengers;
         }
 
-        public void Add(Passenger passenger)
+        public void AddPassenger(Passenger passenger)
         {
             if (passenger == null)
                 throw new ArgumentNullException(nameof(passenger));
 
-            var records = GetAll();
+            var records = GetAllPassengers();
             records.Add(passenger);
 
             Save(records);
         }
 
-        public void Update(Func<Passenger, bool> predicate, Passenger newPassenger)
+        public void UpdatePassenger(Func<Passenger, bool> predicate, Passenger newPassenger)
         {
             if (predicate is null) throw new ArgumentNullException(nameof(predicate));
             if (newPassenger is null) throw new ArgumentNullException(nameof(newPassenger));
 
-            var records = GetAll();
+            var records = GetAllPassengers();
             var index = records.FindIndex(r => predicate(r));
 
             if (index < 0)
