@@ -7,7 +7,13 @@ namespace AirportTicketBookingSystem.Models;
     {
         private const decimal priceFactor = 4;
         public TravelClass Name => TravelClass.FirstClass;
+        public decimal BasePrice { get; private set; }
 
-        public decimal CalculatePrice(decimal basePrice) => basePrice * priceFactor;
+        public FirstClass(decimal basePrice)
+        {
+          BasePrice = basePrice;
+        }
+
+        public decimal CalculatePrice() => BasePrice * priceFactor;
     }
 

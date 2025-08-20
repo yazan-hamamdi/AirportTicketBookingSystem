@@ -6,6 +6,8 @@ namespace AirportTicketBookingSystem.Interfaces;
     public interface ISeatClass
     {
         TravelClass Name { get; }
-        decimal CalculatePrice(decimal basePrice);
+        decimal BasePrice { get; }
+
+        decimal CalculatePrice();
     }
 
