@@ -1,16 +1,18 @@
 ﻿using AirportTicketBookingSystem.IRepositories;
 using AirportTicketBookingSystem.IServices;
 using AirportTicketBookingSystem.Models;
+using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Services
 {
     public class PassengerService : IPassengerService
     {
         private readonly IPassengerRepo _passengerRepo;
-
-        public PassengerService(IPassengerRepo passengerRepo)
+        private readonly IBookingRepo _bookingRepo;
+        public PassengerService(IPassengerRepo passengerRepo, IBookingRepo bookRepo)
         {
             _passengerRepo = passengerRepo;
+            _bookingRepo = bookRepo;
         }
 
         public Passenger GetPassengerById(int id)
@@ -25,6 +27,43 @@ namespace AirportTicketBookingSystem.Services
             }
         }
 
+        public List<Passenger> GetAllPassengersWithBookings()
+        {
+            var passengers = _passengerRepo.GetAllPassengers();
+            var bookings = _bookingRepo.GetAllBookings();
+            PassengerBookingUtility.AttachBookings(passengers, bookings);
+            return passengers;
+        }
+
+        public Passenger GetPassengerByIdWithBookings(int id)
+        {
+            var passenger = _passengerRepo.GetPassengerById(id);
+            var bookings = _bookingRepo.GetAllBookings();
+
+            PassengerBookingUtility.AttachBookings(new List<Passenger> { passenger }, bookings);
+
+            return passenger;
+        }
+
+        public void DeletePassengerWithBookings(int passengerId)
+        {
+            var passenger = _passengerRepo.GetPassengerById(passengerId);
+            if (passenger == null)
+                throw new KeyNotFoundException($"Passenger with Id {passengerId} does not exist");
+
+            var allBookings = _bookingRepo.GetAllBookings();
+            PassengerBookingUtility.CascadeDeleteBookings(passengerId, allBookings, _bookingRepo.DeleteBooking);
+
+            _passengerRepo.DeletePassenger(passengerId);
+        }
+
+        public void AddPassengerWithBookings(Passenger passenger)
+        {
+            if (passenger == null) throw new ArgumentNullException(nameof(passenger));
+            _passengerRepo.AddPassenger(passenger);
+
+            PassengerBookingUtility.CascadeAddBookings(passenger, _bookingRepo.AddBooking);
+        }
         public void AddPassenger(Passenger passenger)
         {
             if (passenger == null) throw new ArgumentNullException(nameof(passenger));

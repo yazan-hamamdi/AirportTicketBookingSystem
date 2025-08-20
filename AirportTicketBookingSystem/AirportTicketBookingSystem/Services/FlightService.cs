@@ -1,16 +1,19 @@
 ﻿using AirportTicketBookingSystem.IRepositories;
 using AirportTicketBookingSystem.IServices;
 using AirportTicketBookingSystem.Models;
+using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Services
 {
     public class FlightService : IFlightService
     {
         private readonly IFlightRepo _flightRepo;
+        private readonly IBookingRepo _bookingRepo;
 
-        public FlightService(IFlightRepo flightRepo)
+        public FlightService(IFlightRepo flightRepo, IBookingRepo bookingRepo)
         {
             _flightRepo = flightRepo;
+            _bookingRepo = bookingRepo;
         }
 
         public Flight GetFlightById(int id)
@@ -23,6 +26,45 @@ namespace AirportTicketBookingSystem.Services
             {
                 throw new KeyNotFoundException($"Flight with Id {id} does not exist");
             }
+        }
+
+        public List<Flight> GetAllFlightsWithBookings()
+        {
+            var flights = _flightRepo.GetAllFlights();
+            var bookings = _bookingRepo.GetAllBookings();
+            FlightBookingUtility.AttachBookings(flights, bookings);
+            return flights;
+        }
+
+        public Flight GetFlightByIdWithBookings(int id)
+        {
+            var flight = _flightRepo.GetFlightById(id);
+            var bookings = _bookingRepo.GetAllBookings();
+
+            FlightBookingUtility.AttachBookings(new List<Flight> { flight }, bookings);
+
+            return flight;
+        }
+
+        public void DeleteFlightWithBookings(int flightId)
+        {
+            var flight = _flightRepo.GetFlightById(flightId);
+            if (flight == null)
+                throw new KeyNotFoundException($"Flight with Id {flightId} does not exist");
+
+            var allBookings = _bookingRepo.GetAllBookings();
+            FlightBookingUtility.CascadeDeleteBookings(flightId, allBookings, _bookingRepo.DeleteBooking);
+
+            _flightRepo.DeleteFlight(flightId);
+        }
+
+        public void AddFlightWithBookings(Flight flight)
+        {
+            if (flight == null) throw new ArgumentNullException(nameof(flight));
+
+            _flightRepo.AddFlight(flight);
+
+            FlightBookingUtility.CascadeAddBookings(flight, _bookingRepo.AddBooking);
         }
 
         public void AddFlight(Flight flight)
