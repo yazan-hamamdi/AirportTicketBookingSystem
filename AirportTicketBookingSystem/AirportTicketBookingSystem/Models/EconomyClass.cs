@@ -7,6 +7,8 @@ namespace AirportTicketBookingSystem.Models;
     {
         public TravelClass Name => TravelClass.Economy;
         public decimal BasePrice { get; private set; }
+    
+        public EconomyClass() { }
 
         public EconomyClass(decimal basePrice)
         {

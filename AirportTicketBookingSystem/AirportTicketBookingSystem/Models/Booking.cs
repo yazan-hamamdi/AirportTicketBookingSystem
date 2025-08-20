@@ -9,18 +9,19 @@ namespace AirportTicketBookingSystem.Models;
         public int PassengerId { get; set; }
         public DateTime BookingDate { get; set; }
         public ISeatClass SeatClass { get; set; }
-        public decimal Price => SeatClass.CalculatePrice();
+        public decimal Price { get; }
         
         public Booking() { }
         
         public Booking(int id,int flightId, int passengerId , DateTime bookingDate, 
-           string seatNumber, ISeatClass seatClass)
+           string seatNumber, ISeatClass seatClass, decimal price)
         {
            Id = id;
            FlightId = flightId;
            PassengerId = passengerId;
            BookingDate = bookingDate;
            SeatClass = seatClass;
+           Price = price;
         }
 
     }
