@@ -1,4 +1,5 @@
-﻿using AirportTicketBookingSystem.IRepositories;
+﻿using AirportTicketBookingSystem.Enums;
+using AirportTicketBookingSystem.IRepositories;
 using AirportTicketBookingSystem.IServices;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.Utilities;
@@ -9,10 +10,12 @@ namespace AirportTicketBookingSystem.Services
     {
         private readonly IPassengerRepo _passengerRepo;
         private readonly IBookingRepo _bookingRepo;
-        public PassengerService(IPassengerRepo passengerRepo, IBookingRepo bookRepo)
+        private readonly IFlightRepo _flightRepo;
+        public PassengerService(IPassengerRepo passengerRepo, IBookingRepo bookRepo, IFlightRepo flightRepo)
         {
             _passengerRepo = passengerRepo;
             _bookingRepo = bookRepo;
+            _flightRepo = flightRepo;
         }
 
         public Passenger GetPassengerById(int id)
@@ -99,6 +102,59 @@ namespace AirportTicketBookingSystem.Services
         public List<Passenger> GetAllPassengers()
         {
             return _passengerRepo.GetAllPassengers();
+        }
+
+        public List<Flight> SearchAvailableFlights( string departureCountry = null, string destinationCountry = null,
+         string departureAirport = null, string arrivalAirport = null, DateTime? departureDateFrom = null,
+         DateTime? departureDateTo = null, TravelClass? seatClass = null, decimal? minPrice = null,decimal? maxPrice = null)
+        {
+            var allFlights = _flightRepo.GetAllFlights();
+            var allBookings = _bookingRepo.GetAllBookings();
+
+            FlightBookingUtility.AttachBookings(allFlights, allBookings);
+
+            var query =
+        from f in allFlights
+        where (string.IsNullOrEmpty(departureCountry) || f.DepartureCountry.Equals(departureCountry, StringComparison.OrdinalIgnoreCase))
+        where (string.IsNullOrEmpty(destinationCountry) || f.DestinationCountry.Equals(destinationCountry, StringComparison.OrdinalIgnoreCase))
+        where (string.IsNullOrEmpty(departureAirport) || f.DepartureAirport.Equals(departureAirport, StringComparison.OrdinalIgnoreCase))
+        where (string.IsNullOrEmpty(arrivalAirport) || f.ArrivalAirport.Equals(arrivalAirport, StringComparison.OrdinalIgnoreCase))
+        where (!departureDateFrom.HasValue || f.DepartureDate >= departureDateFrom.Value)
+        where (!departureDateTo.HasValue || f.DepartureDate <= departureDateTo.Value)
+        where (!seatClass.HasValue || f.Bookings.Any(b => b.SeatClass.Name == seatClass.Value))
+        where (!minPrice.HasValue || f.Bookings.Any(b => b.SeatClass.CalculatePrice() >= minPrice.Value))
+        where (!maxPrice.HasValue || f.Bookings.Any(b => b.SeatClass.CalculatePrice() <= maxPrice.Value))
+        select f;
+
+            return query.ToList();
+        }
+
+        public List<Booking> GetBookingsForPassenger(int passengerId)
+        {
+            var passenger = _passengerRepo.GetPassengerById(passengerId);
+            if (passenger == null)
+                throw new KeyNotFoundException($"Passenger with Id {passengerId} does not exist");
+
+            var allBookings = _bookingRepo.GetAllBookings();
+            return allBookings.Where(b => b.PassengerId == passengerId).ToList();
+        }
+
+        public void CancelBooking(int passengerId, int bookingId)
+        {
+            var booking = _bookingRepo.GetBookingById(bookingId);
+            if (booking == null || booking.PassengerId != passengerId)
+                throw new KeyNotFoundException("Booking not found for this passenger");
+
+            _bookingRepo.DeleteBooking(bookingId);
+        }
+
+        public void ModifyBooking(int passengerId, int bookingId, Booking newBooking)
+        {
+            var PassengerBooking = _bookingRepo.GetBookingById(bookingId);
+            if (PassengerBooking.PassengerId != passengerId)
+                throw new KeyNotFoundException("Booking not found for this passenger");
+
+            _bookingRepo.UpdateBooking(b => b.Id == bookingId, newBooking);
         }
 
     }

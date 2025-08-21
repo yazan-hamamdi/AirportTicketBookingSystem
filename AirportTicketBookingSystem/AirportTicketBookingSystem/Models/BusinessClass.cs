@@ -19,4 +19,3 @@ namespace AirportTicketBookingSystem.Models;
         public decimal CalculatePrice() => BasePrice * priceFactor;
 
     }
-
