@@ -5,10 +5,10 @@ namespace AirportTicketBookingSystem.IServices
     public interface IBookingService
     {
         Booking GetBookingById(int id);
-        List<Booking> GetAllBookings();
         void AddBooking(Booking booking);
-        void UpdateBooking(int id, Booking updatedBooking);
+        void UpdateBooking(int id, Booking newBooking);
         void DeleteBooking(int id);
+        List<Booking> GetAllBookings();
     }
 
 }

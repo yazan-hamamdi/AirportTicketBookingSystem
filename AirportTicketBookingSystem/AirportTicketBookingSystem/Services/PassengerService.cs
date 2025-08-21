@@ -11,6 +11,7 @@ namespace AirportTicketBookingSystem.Services
         private readonly IPassengerRepo _passengerRepo;
         private readonly IBookingRepo _bookingRepo;
         private readonly IFlightRepo _flightRepo;
+
         public PassengerService(IPassengerRepo passengerRepo, IBookingRepo bookRepo, IFlightRepo flightRepo)
         {
             _passengerRepo = passengerRepo;
@@ -67,6 +68,7 @@ namespace AirportTicketBookingSystem.Services
 
             PassengerBookingUtility.CascadeAddBookings(passenger, _bookingRepo.AddBooking);
         }
+
         public void AddPassenger(Passenger passenger)
         {
             if (passenger == null) throw new ArgumentNullException(nameof(passenger));

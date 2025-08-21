@@ -100,6 +100,24 @@ namespace AirportTicketBookingSystem.Services
             }
         }
 
+        public void ImportFlights(List<Flight> flights)
+        {
+            if (flights == null || !flights.Any())
+                throw new ArgumentException("No flights provided for import");
+
+            foreach (var flight in flights)
+            {
+                if (flight == null)
+                    throw new ArgumentNullException(nameof(flight), "One of the flights is null");
+
+                var existing = _flightRepo.GetAllFlights().Any(f => f.Id == flight.Id);
+                if (existing)
+                    throw new InvalidOperationException($"Flight with Id {flight.Id} already exists");
+
+                _flightRepo.AddFlight(flight);
+            }
+        }
+
         public List<Flight> GetAllFlights()
         {
             return _flightRepo.GetAllFlights();

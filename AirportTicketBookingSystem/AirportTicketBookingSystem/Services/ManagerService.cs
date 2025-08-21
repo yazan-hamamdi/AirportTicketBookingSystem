@@ -2,7 +2,6 @@
 using AirportTicketBookingSystem.IRepositories;
 using AirportTicketBookingSystem.IServices;
 using AirportTicketBookingSystem.Models;
-using AirportTicketBookingSystem.Repositories;
 
 namespace AirportTicketBookingSystem.Services
 {
@@ -65,6 +64,7 @@ namespace AirportTicketBookingSystem.Services
                 throw new KeyNotFoundException($"Cannot delete. Manager with Id {id} does not exist");
             }
         }
+
         public List<Booking> FilterBookingsForManager( int? flightId = null, int? passengerId = null,
         DateTime? bookingDateFrom = null, DateTime? bookingDateTo = null, TravelClass? seatClass = null,
         decimal? minPrice = null, decimal? maxPrice = null)
