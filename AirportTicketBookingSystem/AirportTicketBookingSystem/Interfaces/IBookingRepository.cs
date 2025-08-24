@@ -18,5 +18,6 @@ namespace AirportTicketBookingSystem.Interfaces
         TravelClass? seatClass = null,
         decimal? minPrice = null,
         decimal? maxPrice = null );
+        void DeleteBookings(Func<Booking, bool> predicate);
     }
 }

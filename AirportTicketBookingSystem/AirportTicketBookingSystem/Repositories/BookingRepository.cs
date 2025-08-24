@@ -128,5 +128,21 @@ namespace AirportTicketBookingSystem.Repositories
             return query.ToList();
         }
 
+        public void DeleteBookings(Func<Booking, bool> predicate)
+        {
+            var allBookings = GetAllBookings();
+            var relatedBookings = allBookings.Where(predicate).ToList();
+
+            if (relatedBookings.Count == 0)
+                throw new KeyNotFoundException("No bookings found matching the specified criteria");
+
+            foreach (var booking in relatedBookings)
+            {
+                allBookings.Remove(booking);
+            }
+
+            Save(allBookings);
+        }
+
     }
 }

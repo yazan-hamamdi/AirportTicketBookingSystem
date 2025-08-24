@@ -1,28 +1,29 @@
 ﻿using AirportTicketBookingSystem.Enums;
 using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
+using AirportTicketBookingSystem.Repositories;
 using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Services
 {
     public class PassengerService : IPassengerService
     {
-        private readonly IPassengerRepository _passengerRepo;
-        private readonly IBookingRepository _bookingRepo;
-        private readonly IFlightRepository _flightRepo;
+        private readonly IPassengerRepository _passengerRepository;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IFlightRepository _flightRepository;
 
         public PassengerService(IPassengerRepository passengerRepo, IBookingRepository bookRepo, IFlightRepository flightRepo)
         {
-            _passengerRepo = passengerRepo;
-            _bookingRepo = bookRepo;
-            _flightRepo = flightRepo;
+            _passengerRepository = passengerRepo;
+            _bookingRepository = bookRepo;
+            _flightRepository = flightRepo;
         }
 
         public Passenger GetPassengerById(int id)
         {
             try
             {
-                return _passengerRepo.GetPassengerById(id);
+                return _passengerRepository.GetPassengerById(id);
             }
             catch (KeyNotFoundException)
             {
@@ -32,16 +33,16 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Passenger> GetAllPassengersWithBookings()
         {
-            var passengers = _passengerRepo.GetAllPassengers();
-            var bookings = _bookingRepo.GetAllBookings();
+            var passengers = _passengerRepository.GetAllPassengers();
+            var bookings = _bookingRepository.GetAllBookings();
             PassengerBookingUtilities.AttachBookings(passengers, bookings);
             return passengers;
         }
 
         public Passenger GetPassengerByIdWithBookings(int id)
         {
-            var passenger = _passengerRepo.GetPassengerById(id);
-            var bookings = _bookingRepo.GetAllBookings();
+            var passenger = _passengerRepository.GetPassengerById(id);
+            var bookings = _bookingRepository.GetAllBookings();
 
             PassengerBookingUtilities.AttachBookings(new List<Passenger> { passenger }, bookings);
 
@@ -50,28 +51,18 @@ namespace AirportTicketBookingSystem.Services
 
         public void DeletePassengerWithBookings(int passengerId)
         {
-            var passenger = _passengerRepo.GetPassengerById(passengerId);
+            var passenger = _passengerRepository.GetPassengerById(passengerId);
             if (passenger == null)
                 throw new KeyNotFoundException($"Passenger with Id {passengerId} does not exist");
 
-            var allBookings = _bookingRepo.GetAllBookings();
-            PassengerBookingUtilities.CascadeDeleteBookings(passengerId, allBookings, _bookingRepo.DeleteBooking);
-
-            _passengerRepo.DeletePassenger(passengerId);
-        }
-
-        public void AddPassengerWithBookings(Passenger passenger)
-        {
-            if (passenger == null) throw new ArgumentNullException(nameof(passenger));
-            _passengerRepo.AddPassenger(passenger);
-
-            PassengerBookingUtilities.CascadeAddBookings(passenger, _bookingRepo.AddBooking);
+            _bookingRepository.DeleteBookings(b => b.PassengerId == passengerId);
+            _passengerRepository.DeletePassenger(passengerId);
         }
 
         public void AddPassenger(Passenger passenger)
         {
             if (passenger == null) throw new ArgumentNullException(nameof(passenger));
-            _passengerRepo.AddPassenger(passenger);
+            _passengerRepository.AddPassenger(passenger);
         }
 
         public void UpdatePassenger(int id, Passenger newPassenger)
@@ -80,7 +71,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _passengerRepo.UpdatePassenger(p => p.Id == id, newPassenger);
+                _passengerRepository.UpdatePassenger(p => p.Id == id, newPassenger);
             }
             catch (KeyNotFoundException)
             {
@@ -92,7 +83,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                _passengerRepo.DeletePassenger(id);
+                _passengerRepository.DeletePassenger(id);
             }
             catch (KeyNotFoundException)
             {
@@ -102,7 +93,20 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Passenger> GetAllPassengers()
         {
-            return _passengerRepo.GetAllPassengers();
+            return _passengerRepository.GetAllPassengers();
+        }
+
+        public void AddPassengerWithBookings(Passenger newPassenger, List<Booking> bookings)
+        {
+            _passengerRepository.AddPassenger(newPassenger);
+            if (bookings == null || bookings.Count == 0)
+                throw new ArgumentException("Bookings list cannot be null or empty when adding a passenger with bookings");
+
+            foreach (var booking in bookings)
+            {
+                booking.PassengerId = newPassenger.Id;
+                _bookingRepository.AddBooking(booking);
+            }
         }
 
     }

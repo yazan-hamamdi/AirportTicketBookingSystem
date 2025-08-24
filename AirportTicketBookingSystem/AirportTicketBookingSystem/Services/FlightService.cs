@@ -1,26 +1,27 @@
 ﻿using AirportTicketBookingSystem.Enums;
 using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
+using AirportTicketBookingSystem.Repositories;
 using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Services
 {
     public class FlightService : IFlightService
     {
-        private readonly IFlightRepository _flightRepo;
-        private readonly IBookingRepository _bookingRepo;
+        private readonly IFlightRepository _flightRepository;
+        private readonly IBookingRepository _bookingRepository;
 
         public FlightService(IFlightRepository flightRepo, IBookingRepository bookingRepo)
         {
-            _flightRepo = flightRepo;
-            _bookingRepo = bookingRepo;
+            _flightRepository = flightRepo;
+            _bookingRepository = bookingRepo;
         }
 
         public Flight GetFlightById(int id)
         {
             try
             {
-                return _flightRepo.GetFlightById(id);
+                return _flightRepository.GetFlightById(id);
             }
             catch (KeyNotFoundException)
             {
@@ -30,16 +31,16 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Flight> GetAllFlightsWithBookings()
         {
-            var flights = _flightRepo.GetAllFlights();
-            var bookings = _bookingRepo.GetAllBookings();
+            var flights = _flightRepository.GetAllFlights();
+            var bookings = _bookingRepository.GetAllBookings();
             FlightBookingUtilities.AttachBookings(flights, bookings);
             return flights;
         }
 
         public Flight GetFlightByIdWithBookings(int id)
         {
-            var flight = _flightRepo.GetFlightById(id);
-            var bookings = _bookingRepo.GetAllBookings();
+            var flight = _flightRepository.GetFlightById(id);
+            var bookings = _bookingRepository.GetAllBookings();
 
             FlightBookingUtilities.AttachBookings(new List<Flight> { flight }, bookings);
 
@@ -48,29 +49,18 @@ namespace AirportTicketBookingSystem.Services
 
         public void DeleteFlightWithBookings(int flightId)
         {
-            var flight = _flightRepo.GetFlightById(flightId);
+            var flight = _flightRepository.GetFlightById(flightId);
             if (flight == null)
                 throw new KeyNotFoundException($"Flight with Id {flightId} does not exist");
 
-            var allBookings = _bookingRepo.GetAllBookings();
-            FlightBookingUtilities.CascadeDeleteBookings(flightId, allBookings, _bookingRepo.DeleteBooking);
-
-            _flightRepo.DeleteFlight(flightId);
-        }
-
-        public void AddFlightWithBookings(Flight flight)
-        {
-            if (flight == null) throw new ArgumentNullException(nameof(flight));
-
-            _flightRepo.AddFlight(flight);
-
-            FlightBookingUtilities.CascadeAddBookings(flight, _bookingRepo.AddBooking);
+            _bookingRepository.DeleteBookings(b => b.FlightId == flightId);
+            _flightRepository.DeleteFlight(flightId);
         }
 
         public void AddFlight(Flight flight)
         {
             if (flight == null) throw new ArgumentNullException(nameof(flight));
-            _flightRepo.AddFlight(flight);
+            _flightRepository.AddFlight(flight);
         }
 
         public void UpdateFlight(Func<Flight, bool> predicate, Flight newFlight)
@@ -80,7 +70,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _flightRepo.UpdateFlight(predicate, newFlight);
+                _flightRepository.UpdateFlight(predicate, newFlight);
             }
             catch (KeyNotFoundException)
             {
@@ -92,7 +82,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                _flightRepo.DeleteFlight(id);
+                _flightRepository.DeleteFlight(id);
             }
             catch (KeyNotFoundException)
             {
@@ -110,17 +100,31 @@ namespace AirportTicketBookingSystem.Services
                 if (flight == null)
                     throw new ArgumentNullException(nameof(flight), "One of the flights is null");
 
-                var existing = _flightRepo.GetAllFlights().Any(f => f.Id == flight.Id);
+                var existing = _flightRepository.GetAllFlights().Any(f => f.Id == flight.Id);
                 if (existing)
                     throw new InvalidOperationException($"Flight with Id {flight.Id} already exists");
 
-                _flightRepo.AddFlight(flight);
+                _flightRepository.AddFlight(flight);
             }
         }
 
         public List<Flight> GetAllFlights()
         {
-            return _flightRepo.GetAllFlights();
+            return _flightRepository.GetAllFlights();
+        }
+
+        public void AddFlightWithBookings(Flight newFlight, List<Booking> bookings)
+        {
+            _flightRepository.AddFlight(newFlight);
+
+            if (bookings == null || bookings.Count == 0)
+                throw new ArgumentException("Bookings list cannot be null or empty when adding a flight with bookings");
+
+            foreach (var booking in bookings)
+            {
+                booking.FlightId = newFlight.Id; 
+               _bookingRepository.AddBooking(booking); 
+            }
         }
 
     }

@@ -1,5 +1,4 @@
-﻿using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Models;
+﻿using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Interfaces
 {
@@ -9,11 +8,10 @@ namespace AirportTicketBookingSystem.Interfaces
         List<Passenger> GetAllPassengersWithBookings();
         Passenger GetPassengerByIdWithBookings(int id);
         void DeletePassengerWithBookings(int passengerId);
-        void AddPassengerWithBookings(Passenger passenger);
         void AddPassenger(Passenger passenger);
         void UpdatePassenger(int id, Passenger newPassenger);
         void DeletePassenger(int id);
         List<Passenger> GetAllPassengers();
+        void AddPassengerWithBookings(Passenger newPassenger, List<Booking> bookings);
     }
-
 }

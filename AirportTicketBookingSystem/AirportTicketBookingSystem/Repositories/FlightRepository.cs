@@ -113,5 +113,6 @@ namespace AirportTicketBookingSystem.Repositories
 
             return query.ToList();
         }
+
     }
 }

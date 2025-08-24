@@ -17,31 +17,5 @@ namespace AirportTicketBookingSystem.Utilities
                     : new List<Booking>();
             }
         }
-
-        public static void CascadeDeleteBookings(int passengerId, List<Booking> bookings, Action<int> deleteBooking)
-        {
-            var relatedBookings = bookings
-                .Where(b => b.PassengerId == passengerId)
-                .Select(b => b.Id)
-                .ToList();
-
-            foreach (var bookingId in relatedBookings)
-            {
-                deleteBooking(bookingId);
-            }
-        }
-
-        public static void CascadeAddBookings(Passenger passenger, Action<Booking> addBooking)
-        {
-            if (passenger.Bookings == null || !passenger.Bookings.Any())
-                return;
-
-            foreach (var booking in passenger.Bookings)
-            {
-                booking.PassengerId = passenger.Id;
-                addBooking(booking);
-            }
-        }
-
     }
 }
