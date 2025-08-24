@@ -7,7 +7,7 @@ namespace AirportTicketBookingSystem.Interfaces
         public Passenger GetPassengerById(int id);
         List<Passenger> GetAllPassengers();
         void AddPassenger(Passenger passenger);
-        void UpdatePassenger(Func<Passenger, bool> predicate, Passenger newPassenger);
+        void UpdatePassenger(int passengerId, Passenger newPassenger);
         void DeletePassenger(int id);
     }
 }

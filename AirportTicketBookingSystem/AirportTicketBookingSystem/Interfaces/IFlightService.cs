@@ -10,7 +10,7 @@ namespace AirportTicketBookingSystem.Interfaces
         Flight GetFlightByIdWithBookings(int id);
         void DeleteFlightWithBookings(int flightId);
         void AddFlight(Flight flight);
-        void UpdateFlight(Func<Flight, bool> predicate, Flight newFlight);
+        void UpdateFlight(int flightId, Flight newFlight);
         void DeleteFlight(int id);
         void ImportFlights(List<Flight> flights);
         List<Flight> GetAllFlights();

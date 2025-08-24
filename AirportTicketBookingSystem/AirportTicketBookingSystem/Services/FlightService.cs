@@ -63,14 +63,13 @@ namespace AirportTicketBookingSystem.Services
             _flightRepository.AddFlight(flight);
         }
 
-        public void UpdateFlight(Func<Flight, bool> predicate, Flight newFlight)
+        public void UpdateFlight(int flightId, Flight newFlight)
         {
             if (newFlight == null) throw new ArgumentNullException(nameof(newFlight));
-            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             try
             {
-                _flightRepository.UpdateFlight(predicate, newFlight);
+                _flightRepository.UpdateFlight(flightId, newFlight);
             }
             catch (KeyNotFoundException)
             {

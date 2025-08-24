@@ -71,7 +71,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _passengerRepository.UpdatePassenger(p => p.Id == id, newPassenger);
+                _passengerRepository.UpdatePassenger(id, newPassenger);
             }
             catch (KeyNotFoundException)
             {

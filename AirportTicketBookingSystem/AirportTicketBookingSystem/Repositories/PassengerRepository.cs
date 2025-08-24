@@ -64,13 +64,12 @@ namespace AirportTicketBookingSystem.Repositories
             Save(records);
         }
 
-        public void UpdatePassenger(Func<Passenger, bool> predicate, Passenger newPassenger)
+        public void UpdatePassenger(int passengerId, Passenger newPassenger)
         {
-            if (predicate is null) throw new ArgumentNullException(nameof(predicate));
             if (newPassenger is null) throw new ArgumentNullException(nameof(newPassenger));
 
             var records = GetAllPassengers();
-            var index = records.FindIndex(r => predicate(r));
+            var index = records.FindIndex(p => p.Id == passengerId);
 
             if (index < 0)
                 throw new KeyNotFoundException("Passenger not found to update");

@@ -63,13 +63,12 @@ namespace AirportTicketBookingSystem.Repositories
             Save(records);
         }
 
-        public void UpdateManager(Func<Manager, bool> predicate, Manager newManager)
+        public void UpdateManager(int managerId, Manager newManager)
         {
-            if (predicate is null) throw new ArgumentNullException(nameof(predicate));
             if (newManager is null) throw new ArgumentNullException(nameof(newManager));
 
             var records = GetAllManagers();
-            var index = records.FindIndex(r => predicate(r));
+            var index = records.FindIndex(m => m.Id == managerId);
 
             if (index < 0)
                 throw new KeyNotFoundException("Manager not found to update");

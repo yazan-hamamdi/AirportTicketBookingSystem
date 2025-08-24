@@ -44,7 +44,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _managerRepo.UpdateManager(m => m.Id == id, updatedManager);
+                _managerRepo.UpdateManager(id, updatedManager);
             }
             catch (KeyNotFoundException)
             {

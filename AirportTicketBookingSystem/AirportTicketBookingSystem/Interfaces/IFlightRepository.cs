@@ -9,7 +9,7 @@ namespace AirportTicketBookingSystem.Interfaces
         void DeleteFlight(int id);
         List<Flight> GetAllFlights();
         void AddFlight(Flight flight);
-        void UpdateFlight(Func<Flight, bool> predicate, Flight newFlight);
+        void UpdateFlight(int flightId, Flight newFlight);
         List<Flight> SearchAvailableFlights(
          string departureCountry = null,
          string destinationCountry = null,

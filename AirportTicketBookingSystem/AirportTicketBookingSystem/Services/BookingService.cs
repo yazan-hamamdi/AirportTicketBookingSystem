@@ -39,7 +39,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _bookingRepo.UpdateBooking(b => b.Id == id, newBooking);
+                _bookingRepo.UpdateBooking(id, newBooking);
             }
             catch (KeyNotFoundException)
             {
@@ -88,7 +88,7 @@ namespace AirportTicketBookingSystem.Services
             if (PassengerBooking.PassengerId != passengerId)
                 throw new KeyNotFoundException("Booking not found for this passenger");
 
-            _bookingRepo.UpdateBooking(b => b.Id == bookingId, newBooking);
+            _bookingRepo.UpdateBooking(bookingId, newBooking);
         }
 
     }
