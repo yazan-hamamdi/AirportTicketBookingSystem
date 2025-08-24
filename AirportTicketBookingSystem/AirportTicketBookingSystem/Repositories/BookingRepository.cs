@@ -69,6 +69,8 @@ namespace AirportTicketBookingSystem.Repositories
                 throw new ArgumentNullException(nameof(booking));
 
             var bookingRecords = GetAllBookings();
+            booking.Id = IdGenerator.GenerateNewId(bookingRecords);
+
             bookingRecords.Add(booking);
             Save(bookingRecords);
         }

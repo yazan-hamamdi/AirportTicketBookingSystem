@@ -1,7 +1,9 @@
-﻿namespace AirportTicketBookingSystem.Models;
+﻿using AirportTicketBookingSystem.Interfaces;
 
-public class Passenger
-{
+namespace AirportTicketBookingSystem.Models;
+
+public class Passenger : IEntity
+{ 
     public int Id { get; set; }
     public string FullName { get; set; }
     public string PassportNumber { get; set; }

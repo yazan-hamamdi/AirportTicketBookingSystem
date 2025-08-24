@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 using System.Globalization;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.Interfaces;
+using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Repositories
 {
@@ -59,6 +60,8 @@ namespace AirportTicketBookingSystem.Repositories
                 throw new ArgumentNullException(nameof(manager));
 
             var records = GetAllManagers();
+            manager.Id = IdGenerator.GenerateNewId(records);
+
             records.Add(manager);
             Save(records);
         }

@@ -1,6 +1,8 @@
-﻿namespace AirportTicketBookingSystem.Models;
+﻿using AirportTicketBookingSystem.Interfaces;
 
-public class Booking
+namespace AirportTicketBookingSystem.Models;
+
+public class Booking : IEntity
 {
     public int Id { get; set; }
     public int FlightId { get; set; }
