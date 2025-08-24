@@ -1,16 +1,18 @@
-﻿using AirportTicketBookingSystem.IRepositories;
-using AirportTicketBookingSystem.IServices;
+﻿using AirportTicketBookingSystem.Enums;
+using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
+using AirportTicketBookingSystem.Repositories;
 
 namespace AirportTicketBookingSystem.Services
 {
     public class BookingService : IBookingService
     {
-        private readonly IBookingRepo _bookingRepo;
-
-        public BookingService(IBookingRepo bookingRepo)
+        private readonly IBookingRepository _bookingRepo;
+        private readonly IPassengerRepository _passengerRepo;
+        public BookingService(IBookingRepository bookingRepo, IPassengerRepository passengerRepo)
         {
             _bookingRepo = bookingRepo;
+            _passengerRepo = passengerRepo;
         }
 
         public Booking GetBookingById(int id)
@@ -60,6 +62,33 @@ namespace AirportTicketBookingSystem.Services
         public List<Booking> GetAllBookings()
         {
             return _bookingRepo.GetAllBookings();
+        }
+
+        public List<Booking> GetBookingsForPassenger(int passengerId)
+        {
+            var passenger = _passengerRepo.GetPassengerById(passengerId);
+            if (passenger == null)
+                throw new KeyNotFoundException($"Passenger with Id {passengerId} does not exist");
+
+            var allBookings = _bookingRepo.GetAllBookings();
+            return allBookings.Where(b => b.PassengerId == passengerId).ToList();
+        }
+        public void CancelBooking(int passengerId, int bookingId)
+        {
+            var booking = _bookingRepo.GetBookingById(bookingId);
+            if (booking == null || booking.PassengerId != passengerId)
+                throw new KeyNotFoundException("Booking not found for this passenger");
+
+            _bookingRepo.DeleteBooking(bookingId);
+        }
+
+        public void ModifyBooking(int passengerId, int bookingId, Booking newBooking)
+        {
+            var PassengerBooking = _bookingRepo.GetBookingById(bookingId);
+            if (PassengerBooking.PassengerId != passengerId)
+                throw new KeyNotFoundException("Booking not found for this passenger");
+
+            _bookingRepo.UpdateBooking(b => b.Id == bookingId, newBooking);
         }
 
     }

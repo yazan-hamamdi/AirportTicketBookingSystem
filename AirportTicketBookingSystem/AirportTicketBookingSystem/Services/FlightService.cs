@@ -1,5 +1,5 @@
-﻿using AirportTicketBookingSystem.IRepositories;
-using AirportTicketBookingSystem.IServices;
+﻿using AirportTicketBookingSystem.Enums;
+using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.Utilities;
 
@@ -7,10 +7,10 @@ namespace AirportTicketBookingSystem.Services
 {
     public class FlightService : IFlightService
     {
-        private readonly IFlightRepo _flightRepo;
-        private readonly IBookingRepo _bookingRepo;
+        private readonly IFlightRepository _flightRepo;
+        private readonly IBookingRepository _bookingRepo;
 
-        public FlightService(IFlightRepo flightRepo, IBookingRepo bookingRepo)
+        public FlightService(IFlightRepository flightRepo, IBookingRepository bookingRepo)
         {
             _flightRepo = flightRepo;
             _bookingRepo = bookingRepo;
@@ -32,7 +32,7 @@ namespace AirportTicketBookingSystem.Services
         {
             var flights = _flightRepo.GetAllFlights();
             var bookings = _bookingRepo.GetAllBookings();
-            FlightBookingUtility.AttachBookings(flights, bookings);
+            FlightBookingUtilities.AttachBookings(flights, bookings);
             return flights;
         }
 
@@ -41,7 +41,7 @@ namespace AirportTicketBookingSystem.Services
             var flight = _flightRepo.GetFlightById(id);
             var bookings = _bookingRepo.GetAllBookings();
 
-            FlightBookingUtility.AttachBookings(new List<Flight> { flight }, bookings);
+            FlightBookingUtilities.AttachBookings(new List<Flight> { flight }, bookings);
 
             return flight;
         }
@@ -53,7 +53,7 @@ namespace AirportTicketBookingSystem.Services
                 throw new KeyNotFoundException($"Flight with Id {flightId} does not exist");
 
             var allBookings = _bookingRepo.GetAllBookings();
-            FlightBookingUtility.CascadeDeleteBookings(flightId, allBookings, _bookingRepo.DeleteBooking);
+            FlightBookingUtilities.CascadeDeleteBookings(flightId, allBookings, _bookingRepo.DeleteBooking);
 
             _flightRepo.DeleteFlight(flightId);
         }
@@ -64,7 +64,7 @@ namespace AirportTicketBookingSystem.Services
 
             _flightRepo.AddFlight(flight);
 
-            FlightBookingUtility.CascadeAddBookings(flight, _bookingRepo.AddBooking);
+            FlightBookingUtilities.CascadeAddBookings(flight, _bookingRepo.AddBooking);
         }
 
         public void AddFlight(Flight flight)

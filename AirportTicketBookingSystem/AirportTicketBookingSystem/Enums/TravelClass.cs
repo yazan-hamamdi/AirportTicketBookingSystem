@@ -1,11 +1,10 @@
-﻿
-namespace AirportTicketBookingSystem.Enums;
+﻿namespace AirportTicketBookingSystem.Enums;
 
-    public enum TravelClass
-    {
-        none = 0,
-        Economy = 1,
-        Business = 2,
-        FirstClass = 3,
-    }
+public enum TravelClass
+{
+    None = 0,
+    Economy = 1,
+    Business = 2,
+    FirstClass = 3,
+}
 

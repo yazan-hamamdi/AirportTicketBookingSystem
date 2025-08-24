@@ -1,8 +1,8 @@
 ﻿using AirportTicketBookingSystem.Models;
 
-namespace AirportTicketBookingSystem.IRepositories
+namespace AirportTicketBookingSystem.Interfaces
 {
-    public interface IPassengerRepo
+    public interface IPassengerRepository
     {
         public Passenger GetPassengerById(int id);
         List<Passenger> GetAllPassengers();

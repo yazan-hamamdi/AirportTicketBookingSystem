@@ -2,7 +2,7 @@
 
 namespace AirportTicketBookingSystem.Utilities
 {
-    public static class FlightBookingUtility
+    public static class FlightBookingUtilities
     {
         public static void AttachBookings(List<Flight> flights, List<Booking> bookings)
         {

@@ -1,5 +1,4 @@
-﻿
-namespace AirportTicketBookingSystem.DTOs
+﻿namespace AirportTicketBookingSystem.DTOs
 {
     public class BookingCsv
     {

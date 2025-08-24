@@ -3,15 +3,18 @@ using CsvHelper;
 using System.Globalization;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.DTOs;
-using AirportTicketBookingSystem.IRepositories;
+using AirportTicketBookingSystem.Interfaces;
+using System.Linq;
+using AirportTicketBookingSystem.Utilities;
+using AirportTicketBookingSystem.Enums;
 
 namespace AirportTicketBookingSystem.Repositories
 {
-    public class BookingRepo : IBookingRepo
+    public class BookingRepository : IBookingRepository
     {
         private readonly string _filePath;
 
-        public BookingRepo(string filePath)
+        public BookingRepository(string filePath)
         {
             _filePath = filePath;
         }
@@ -55,7 +58,7 @@ namespace AirportTicketBookingSystem.Repositories
                 r.PassengerId,
                 r.BookingDate,
                 "",
-                SeatClassFactory.FromString(r.SeatClass),
+                r.SeatClass.ToSeatClass(),
                 r.Price
             )).ToList();
         }
@@ -103,6 +106,26 @@ namespace AirportTicketBookingSystem.Repositories
             using var writer = new StreamWriter(_filePath);
             using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
             csv.WriteRecords(bookingRecords);
+        }
+
+        public List<Booking> FilterBookingsForManager(int? flightId = null, int? passengerId = null,
+            DateTime? bookingDateFrom = null, DateTime? bookingDateTo = null, TravelClass? seatClass = null,
+            decimal? minPrice = null, decimal? maxPrice = null)
+        {
+            var allBookings = GetAllBookings();
+
+            var query =
+                from b in allBookings
+                where (!flightId.HasValue || b.FlightId == flightId.Value)
+                where (!passengerId.HasValue || b.PassengerId == passengerId.Value)
+                where (!bookingDateFrom.HasValue || b.BookingDate >= bookingDateFrom.Value)
+                where (!bookingDateTo.HasValue || b.BookingDate <= bookingDateTo.Value)
+                where (!seatClass.HasValue || b.SeatClass.Name == seatClass.Value)
+                where (!minPrice.HasValue || b.SeatClass.CalculatePrice() >= minPrice.Value)
+                where (!maxPrice.HasValue || b.SeatClass.CalculatePrice() <= maxPrice.Value)
+                select b;
+
+            return query.ToList();
         }
 
     }

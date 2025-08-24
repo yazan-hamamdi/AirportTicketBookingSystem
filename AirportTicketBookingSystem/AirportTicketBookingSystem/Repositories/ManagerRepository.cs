@@ -2,15 +2,15 @@
 using CsvHelper.Configuration;
 using System.Globalization;
 using AirportTicketBookingSystem.Models;
-using AirportTicketBookingSystem.IRepositories;
+using AirportTicketBookingSystem.Interfaces;
 
 namespace AirportTicketBookingSystem.Repositories
 {
-    public class ManagerRepo : IManagerRepo
+    public class ManagerRepository : IManagerRepository
     {
         private readonly string _filePath;
 
-        public ManagerRepo(string filePath)
+        public ManagerRepository(string filePath)
         {
             _filePath = filePath;
         }

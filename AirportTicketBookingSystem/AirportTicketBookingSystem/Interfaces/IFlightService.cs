@@ -1,6 +1,7 @@
-﻿using AirportTicketBookingSystem.Models;
+﻿using AirportTicketBookingSystem.Enums;
+using AirportTicketBookingSystem.Models;
 
-namespace AirportTicketBookingSystem.IServices
+namespace AirportTicketBookingSystem.Interfaces
 {
     public interface IFlightService
     {
