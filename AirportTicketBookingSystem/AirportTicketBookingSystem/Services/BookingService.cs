@@ -1,7 +1,6 @@
 ﻿using AirportTicketBookingSystem.Enums;
 using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
-using AirportTicketBookingSystem.Repositories;
 
 namespace AirportTicketBookingSystem.Services
 {
@@ -20,7 +19,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                return _bookingRepository.GetBookingById(id);
+                return _bookingRepository.GetById(id);
             }
             catch (KeyNotFoundException)
             {
@@ -31,7 +30,7 @@ namespace AirportTicketBookingSystem.Services
         public void AddBooking(Booking booking)
         {
             if (booking == null) throw new ArgumentNullException(nameof(booking));
-            _bookingRepository.AddBooking(booking);
+            _bookingRepository.Add(booking);
         }
 
         public void UpdateBooking(int id, Booking newBooking)
@@ -40,7 +39,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _bookingRepository.UpdateBooking(id, newBooking);
+                _bookingRepository.Update(id, newBooking);
             }
             catch (KeyNotFoundException)
             {
@@ -52,7 +51,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                _bookingRepository.DeleteBooking(id);
+                _bookingRepository.Delete(id);
             }
             catch (KeyNotFoundException)
             {
@@ -62,35 +61,35 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Booking> GetAllBookings()
         {
-            return _bookingRepository.GetAllBookings();
+            return _bookingRepository.GetAll();
         }
 
         public List<Booking> GetBookingsForPassenger(int passengerId)
         {
-            var passenger = _passengerRepository.GetPassengerById(passengerId);
+            var passenger = _passengerRepository.GetById(passengerId);
             if (passenger == null)
                 throw new KeyNotFoundException($"Passenger with Id {passengerId} does not exist");
 
-            var allBookings = _bookingRepository.GetAllBookings();
+            var allBookings = _bookingRepository.GetAll();
             return allBookings.Where(b => b.PassengerId == passengerId).ToList();
         }
 
         public void CancelBooking(int passengerId, int bookingId)
         {
-            var booking = _bookingRepository.GetBookingById(bookingId);
+            var booking = _bookingRepository.GetById(bookingId);
             if (booking == null || booking.PassengerId != passengerId)
                 throw new KeyNotFoundException("Booking not found for this passenger");
 
-            _bookingRepository.DeleteBooking(bookingId);
+            _bookingRepository.Delete(bookingId);
         }
 
         public void UpdateBooking(int passengerId, int bookingId, Booking newBooking)
         {
-            var PassengerBooking = _bookingRepository.GetBookingById(bookingId);
+            var PassengerBooking = _bookingRepository.GetById(bookingId);
             if (PassengerBooking.PassengerId != passengerId)
                 throw new KeyNotFoundException("Booking not found for this passenger");
 
-            _bookingRepository.UpdateBooking(bookingId, newBooking);
+            _bookingRepository.Update(bookingId, newBooking);
         }
 
         public List<Booking> FilterBookingsForManager(int? flightId = null, int? passengerId = null,

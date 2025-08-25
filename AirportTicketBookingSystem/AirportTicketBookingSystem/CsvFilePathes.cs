@@ -9,5 +9,4 @@
         public static string Passenger => Path.Combine(BasePath, "passengers.csv");
         public static string Booking => Path.Combine(BasePath, "bookings.csv");
     }
-
 }

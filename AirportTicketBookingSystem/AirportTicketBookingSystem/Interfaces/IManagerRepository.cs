@@ -2,12 +2,8 @@
 
 namespace AirportTicketBookingSystem.Interfaces
 {
-    public interface IManagerRepository
+    public interface IManagerRepository : IRepository<Manager>
     {
-        public Manager GetManagerById(int id);
-        List<Manager> GetAllManagers();
-        void AddManager(Manager manager);
-        void UpdateManager(int managerId, Manager newManager);
-        void DeleteManager(int id);
+        
     }
 }

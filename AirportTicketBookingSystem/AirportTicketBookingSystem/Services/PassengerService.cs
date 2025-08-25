@@ -23,7 +23,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                return _passengerRepository.GetPassengerById(id);
+                return _passengerRepository.GetById(id);
             }
             catch (KeyNotFoundException)
             {
@@ -33,16 +33,16 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Passenger> GetAllPassengersWithBookings()
         {
-            var passengers = _passengerRepository.GetAllPassengers();
-            var bookings = _bookingRepository.GetAllBookings();
+            var passengers = _passengerRepository.GetAll();
+            var bookings = _bookingRepository.GetAll();
             PassengerBookingUtilities.AttachBookings(passengers, bookings);
             return passengers;
         }
 
         public Passenger GetPassengerByIdWithBookings(int id)
         {
-            var passenger = _passengerRepository.GetPassengerById(id);
-            var bookings = _bookingRepository.GetAllBookings();
+            var passenger = _passengerRepository.GetById(id);
+            var bookings = _bookingRepository.GetAll();
 
             PassengerBookingUtilities.AttachBookings(new List<Passenger> { passenger }, bookings);
 
@@ -51,18 +51,18 @@ namespace AirportTicketBookingSystem.Services
 
         public void DeletePassengerWithBookings(int passengerId)
         {
-            var passenger = _passengerRepository.GetPassengerById(passengerId);
+            var passenger = _passengerRepository.GetById(passengerId);
             if (passenger == null)
                 throw new KeyNotFoundException($"Passenger with Id {passengerId} does not exist");
 
             _bookingRepository.DeleteBookings(b => b.PassengerId == passengerId);
-            _passengerRepository.DeletePassenger(passengerId);
+            _passengerRepository.Delete(passengerId);
         }
 
         public void AddPassenger(Passenger passenger)
         {
             if (passenger == null) throw new ArgumentNullException(nameof(passenger));
-            _passengerRepository.AddPassenger(passenger);
+            _passengerRepository.Add(passenger);
         }
 
         public void UpdatePassenger(int id, Passenger newPassenger)
@@ -71,7 +71,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _passengerRepository.UpdatePassenger(id, newPassenger);
+                _passengerRepository.Update(id, newPassenger);
             }
             catch (KeyNotFoundException)
             {
@@ -83,7 +83,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                _passengerRepository.DeletePassenger(id);
+                _passengerRepository.Delete(id);
             }
             catch (KeyNotFoundException)
             {
@@ -93,19 +93,19 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Passenger> GetAllPassengers()
         {
-            return _passengerRepository.GetAllPassengers();
+            return _passengerRepository.GetAll();
         }
 
         public void AddPassengerWithBookings(Passenger newPassenger, List<Booking> bookings)
         {
-            _passengerRepository.AddPassenger(newPassenger);
+            _passengerRepository.Add(newPassenger);
             if (bookings == null || bookings.Count == 0)
                 throw new ArgumentException("Bookings list cannot be null or empty when adding a passenger with bookings");
 
             foreach (var booking in bookings)
             {
                 booking.PassengerId = newPassenger.Id;
-                _bookingRepository.AddBooking(booking);
+                _bookingRepository.Add(booking);
             }
         }
 

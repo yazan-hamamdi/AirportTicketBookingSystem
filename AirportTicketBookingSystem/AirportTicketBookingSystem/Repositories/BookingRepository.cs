@@ -10,37 +10,11 @@ using AirportTicketBookingSystem.Enums;
 
 namespace AirportTicketBookingSystem.Repositories
 {
-    public class BookingRepository : IBookingRepository
+    public class BookingRepository : CsvRepositoryBase<Booking>, IBookingRepository
     {
-        private readonly string _filePath;
+        public BookingRepository(string filePath) : base(filePath) { }
 
-        public BookingRepository(string filePath)
-        {
-            _filePath = filePath;
-        }
-
-        public Booking GetBookingById(int id)
-        {
-            var bookingRecords = GetAllBookings();
-            var selectedBooking = bookingRecords.FirstOrDefault(b => b.Id == id);
-
-            return selectedBooking ?? throw new KeyNotFoundException($"Booking with Id {id} was not found.");
-        }
-
-        public void DeleteBooking(int id)
-        {
-            var bookingRecords = GetAllBookings();
-            var selectedBooking = bookingRecords.FirstOrDefault(b => b.Id == id);
-
-            if (selectedBooking == null)
-                throw new KeyNotFoundException($"Booking with Id {id} was not found");
-
-            bookingRecords.Remove(selectedBooking);
-
-            Save(bookingRecords);
-        }
-
-        public List<Booking> GetAllBookings()
+        public override List<Booking> GetAll()
         {
             if (!File.Exists(_filePath))
                 throw new FileNotFoundException("CSV file not found", _filePath);
@@ -63,57 +37,11 @@ namespace AirportTicketBookingSystem.Repositories
             )).ToList();
         }
 
-        public void AddBooking(Booking booking)
-        {
-            if (booking == null)
-                throw new ArgumentNullException(nameof(booking));
-
-            var bookingRecords = GetAllBookings();
-            booking.Id = IdGenerator.GenerateNewId(bookingRecords);
-
-            bookingRecords.Add(booking);
-            Save(bookingRecords);
-        }
-
-        public void UpdateBooking(int bookingId, Booking newBooking)
-        {
-            if (newBooking is null) throw new ArgumentNullException(nameof(newBooking));
-
-            var bookingRecords = GetAllBookings();
-            var index = bookingRecords.FindIndex(b => b.Id == bookingId);
-
-            if (index < 0)
-               throw new KeyNotFoundException("Booking not found to update");
-
-            bookingRecords[index] = newBooking;
-            Save(bookingRecords);
-        }
-
-        private void Save(List<Booking> bookings)
-        {
-            if (bookings == null)
-                throw new ArgumentNullException(nameof(bookings));
-
-            var bookingRecords = bookings.Select(b => new BookingCsv
-            {
-                Id = b.Id,
-                FlightId = b.FlightId,
-                PassengerId = b.PassengerId,
-                BookingDate = b.BookingDate,
-                SeatClass = b.SeatClass.GetType().Name.Replace("Class", ""),
-                Price = b.Price
-            });
-
-            using var writer = new StreamWriter(_filePath);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.WriteRecords(bookingRecords);
-        }
-
         public List<Booking> FilterBookingsForManager(int? flightId = null, int? passengerId = null,
             DateTime? bookingDateFrom = null, DateTime? bookingDateTo = null, TravelClass? seatClass = null,
             decimal? minPrice = null, decimal? maxPrice = null)
         {
-            var allBookings = GetAllBookings();
+            var allBookings = GetAll();
 
             var query =
                 from b in allBookings
@@ -131,7 +59,7 @@ namespace AirportTicketBookingSystem.Repositories
 
         public void DeleteBookings(Func<Booking, bool> predicate)
         {
-            var allBookings = GetAllBookings();
+            var allBookings = GetAll();
             var relatedBookings = allBookings.Where(predicate).ToList();
 
             if (relatedBookings.Count == 0)

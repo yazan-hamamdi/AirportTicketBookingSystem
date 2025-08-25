@@ -1,5 +1,4 @@
-﻿using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Interfaces;
+﻿using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Services
@@ -19,7 +18,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                return _managerRepo.GetManagerById(id);
+                return _managerRepo.GetById(id);
             }
             catch (KeyNotFoundException)
             {
@@ -29,13 +28,13 @@ namespace AirportTicketBookingSystem.Services
 
         public List<Manager> GetAllManagers()
         {
-            return _managerRepo.GetAllManagers();
+            return _managerRepo.GetAll();
         }
 
         public void AddManager(Manager manager)
         {
             if (manager == null) throw new ArgumentNullException(nameof(manager));
-            _managerRepo.AddManager(manager);
+            _managerRepo.Add(manager);
         }
 
         public void UpdateManager(int id, Manager updatedManager)
@@ -44,7 +43,7 @@ namespace AirportTicketBookingSystem.Services
 
             try
             {
-                _managerRepo.UpdateManager(id, updatedManager);
+                _managerRepo.Update(id, updatedManager);
             }
             catch (KeyNotFoundException)
             {
@@ -56,7 +55,7 @@ namespace AirportTicketBookingSystem.Services
         {
             try
             {
-                _managerRepo.DeleteManager(id);
+                _managerRepo.Delete(id);
             }
             catch (KeyNotFoundException)
             {
