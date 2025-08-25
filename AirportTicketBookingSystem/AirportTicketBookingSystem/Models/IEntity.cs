@@ -1,4 +1,4 @@
-﻿namespace AirportTicketBookingSystem.Interfaces
+﻿namespace AirportTicketBookingSystem.Models
 {
     public interface IEntity
     {

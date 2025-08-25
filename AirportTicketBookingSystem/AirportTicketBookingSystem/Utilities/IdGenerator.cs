@@ -1,4 +1,4 @@
-﻿using AirportTicketBookingSystem.Interfaces;
+﻿using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Utilities
 {

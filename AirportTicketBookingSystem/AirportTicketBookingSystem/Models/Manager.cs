@@ -1,6 +1,4 @@
-﻿using AirportTicketBookingSystem.Interfaces;
-
-namespace AirportTicketBookingSystem.Models;
+﻿namespace AirportTicketBookingSystem.Models;
 
 public class Manager : IEntity
 {

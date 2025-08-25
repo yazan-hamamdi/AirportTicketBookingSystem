@@ -21,7 +21,6 @@ namespace AirportTicketBookingSystem.Interfaces
          decimal? minPrice = null,
          decimal? maxPrice = null
           );
-        List<string> ImportFlightsFromCsv(string csvFilePath);
-        public bool IsDuplicateFlight(Flight flight, List<Flight> existingFlights);
+        void Save(List<Flight> flights);
     }
 }

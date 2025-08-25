@@ -1,11 +1,7 @@
 ﻿using AirportTicketBookingSystem.Enums;
 using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
-using AirportTicketBookingSystem.Repositories;
 using AirportTicketBookingSystem.Utilities;
-using CsvHelper.Configuration;
-using CsvHelper;
-using System.Globalization;
 
 namespace AirportTicketBookingSystem.Services
 {
@@ -127,6 +123,78 @@ namespace AirportTicketBookingSystem.Services
                 details.Add(fieldDetail);
             }
             return details;
+        }
+
+        public List<Flight> SearchAvailableFlights(string departureCountry = null, string destinationCountry = null,
+            string departureAirport = null, string arrivalAirport = null, DateTime? departureDateFrom = null,
+            DateTime? departureDateTo = null, TravelClass? seatClass = null, decimal? minPrice = null, decimal? maxPrice = null)
+        {
+            return _flightRepository.SearchAvailableFlights(
+                departureCountry,
+                destinationCountry,
+                departureAirport,
+                arrivalAirport,
+                departureDateFrom,
+                departureDateTo,
+                seatClass,
+                minPrice,
+                maxPrice
+            );
+        }
+
+        public List<string> ImportFlightsFromCsv(string csvFilePath)
+        {
+            var importedFlights = _flightRepository.GetAllFlights(csvFilePath);
+
+            if (!importedFlights.Any())
+                throw new ArgumentException("No flights found in the CSV file");
+
+            var existingFlights = GetAllFlights();
+            var errors = new List<string>();
+
+            foreach (var flight in importedFlights)
+            {
+                var flightErrors = ValidateFlightForImport(flight, existingFlights);
+
+                if (flightErrors.Any())
+                {
+                    errors.AddRange(flightErrors);
+                    continue;
+                }
+                flight.Id = IdGenerator.GenerateNewId(existingFlights);
+                existingFlights.Add(flight);
+            }
+            _flightRepository.Save(existingFlights);
+
+            return errors;
+        }
+
+        public bool IsDuplicateFlight(Flight flight, List<Flight> existingFlights)
+        {
+            return existingFlights.Any(f =>
+                f.DepartureCountry == flight.DepartureCountry &&
+                f.DestinationCountry == flight.DestinationCountry &&
+                f.DepartureAirport == flight.DepartureAirport &&
+                f.ArrivalAirport == flight.ArrivalAirport &&
+                f.DepartureDate == flight.DepartureDate
+            );
+        }
+
+        private List<string> ValidateFlightForImport(Flight flight, List<Flight> existingFlights)
+        {
+            var errors = new List<string>();
+
+            if (IsDuplicateFlight(flight, existingFlights))
+            {
+                errors.Add($"Duplicate flight: {flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}");
+            }
+
+            var validationErrors = ValidationHelper.ValidateModel(flight);
+            foreach (var err in validationErrors)
+            {
+                errors.Add($"Flight {flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}: {err}");
+            }
+            return errors;
         }
 
     }
