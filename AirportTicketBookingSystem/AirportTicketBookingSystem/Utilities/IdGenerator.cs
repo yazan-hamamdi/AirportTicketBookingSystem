@@ -9,6 +9,4 @@ namespace AirportTicketBookingSystem.Utilities
             return items.Count == 0 ? 1 : items.Max(e => e.Id) + 1;
         }
     }
-
-
 }

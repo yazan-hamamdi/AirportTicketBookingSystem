@@ -20,6 +20,8 @@ namespace AirportTicketBookingSystem.Interfaces
          TravelClass? seatClass = null,
          decimal? minPrice = null,
          decimal? maxPrice = null
-       );
+          );
+        List<string> ImportFlightsFromCsv(string csvFilePath);
+        public bool IsDuplicateFlight(Flight flight, List<Flight> existingFlights);
     }
 }

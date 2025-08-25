@@ -111,5 +111,23 @@ namespace AirportTicketBookingSystem.Services
             }
         }
 
+        public List<FieldValidationDetail> GetFlightModelValidationDetails()
+        {
+            var details = new List<FieldValidationDetail>();
+            var properties = typeof(Flight).GetProperties();
+
+            foreach (var prop in properties)
+            {
+                var fieldDetail = new FieldValidationDetail
+                {
+                    FieldName = prop.Name,
+                    FieldType = prop.PropertyType.Name,
+                    Constraints = ValidationMetadataHelper.GetPropertyConstraints(prop)
+                };
+                details.Add(fieldDetail);
+            }
+            return details;
+        }
+
     }
 }

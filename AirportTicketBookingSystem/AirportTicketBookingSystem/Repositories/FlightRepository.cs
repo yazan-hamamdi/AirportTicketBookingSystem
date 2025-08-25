@@ -58,7 +58,6 @@ namespace AirportTicketBookingSystem.Repositories
             return flights;
         }
 
-
         public void AddFlight(Flight flight)
         {
             if (flight == null)

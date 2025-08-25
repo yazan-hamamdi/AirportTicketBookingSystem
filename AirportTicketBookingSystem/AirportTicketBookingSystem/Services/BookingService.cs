@@ -1,7 +1,5 @@
-﻿using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Interfaces;
+﻿using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
-using AirportTicketBookingSystem.Repositories;
 
 namespace AirportTicketBookingSystem.Services
 {
@@ -9,6 +7,7 @@ namespace AirportTicketBookingSystem.Services
     {
         private readonly IBookingRepository _bookingRepo;
         private readonly IPassengerRepository _passengerRepo;
+
         public BookingService(IBookingRepository bookingRepo, IPassengerRepository passengerRepo)
         {
             _bookingRepo = bookingRepo;
@@ -73,6 +72,7 @@ namespace AirportTicketBookingSystem.Services
             var allBookings = _bookingRepo.GetAllBookings();
             return allBookings.Where(b => b.PassengerId == passengerId).ToList();
         }
+
         public void CancelBooking(int passengerId, int bookingId)
         {
             var booking = _bookingRepo.GetBookingById(bookingId);
