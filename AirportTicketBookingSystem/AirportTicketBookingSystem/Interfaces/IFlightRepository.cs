@@ -7,7 +7,7 @@ namespace AirportTicketBookingSystem.Interfaces
     {
         public Flight GetFlightById(int id);
         void DeleteFlight(int id);
-        List<Flight> GetAllFlights();
+        List<Flight> GetAllFlights(string? filePath = null);
         void AddFlight(Flight flight);
         void UpdateFlight(int flightId, Flight newFlight);
         List<Flight> SearchAvailableFlights(

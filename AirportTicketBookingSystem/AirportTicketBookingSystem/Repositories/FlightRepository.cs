@@ -39,12 +39,14 @@ namespace AirportTicketBookingSystem.Repositories
             Save(flightRecords);
         }
 
-        public List<Flight> GetAllFlights()
+        public List<Flight> GetAllFlights(string? filePath = null)
         {
-            if (!File.Exists(_filePath))
-                throw new FileNotFoundException("CSV file not found", _filePath);
+            var pathToUse = filePath ?? _filePath;
 
-            using var reader = new StreamReader(_filePath);
+            if (!File.Exists(pathToUse))
+                throw new FileNotFoundException("CSV file not found", pathToUse);
+
+            using var reader = new StreamReader(pathToUse);
             using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 PrepareHeaderForMatch = args => args.Header.Trim(),
@@ -55,6 +57,7 @@ namespace AirportTicketBookingSystem.Repositories
 
             return flights;
         }
+
 
         public void AddFlight(Flight flight)
         {
@@ -112,6 +115,61 @@ namespace AirportTicketBookingSystem.Repositories
             select f;
 
             return query.ToList();
+        }
+
+        public List<string> ImportFlightsFromCsv(string csvFilePath)
+        {
+            var importedFlights = GetAllFlights(csvFilePath);
+
+            if (!importedFlights.Any())
+                throw new ArgumentException("No flights found in the CSV file");
+
+            var existingFlights = GetAllFlights();
+            var errors = new List<string>();
+
+            foreach (var flight in importedFlights)
+            {
+                var flightErrors = ValidateFlightForImport(flight, existingFlights);
+
+                if (flightErrors.Any())
+                {
+                    errors.AddRange(flightErrors);
+                    continue; 
+                }
+                flight.Id = IdGenerator.GenerateNewId(existingFlights);
+                existingFlights.Add(flight);
+            }
+            Save(existingFlights);
+
+            return errors;
+        }
+
+        public bool IsDuplicateFlight(Flight flight, List<Flight> existingFlights)
+        {
+            return existingFlights.Any(f =>
+                f.DepartureCountry == flight.DepartureCountry &&
+                f.DestinationCountry == flight.DestinationCountry &&
+                f.DepartureAirport == flight.DepartureAirport &&
+                f.ArrivalAirport == flight.ArrivalAirport &&
+                f.DepartureDate == flight.DepartureDate
+            );
+        }
+
+        private List<string> ValidateFlightForImport(Flight flight, List<Flight> existingFlights)
+        {
+            var errors = new List<string>();
+
+            if (IsDuplicateFlight(flight, existingFlights))
+            {
+                errors.Add($"Duplicate flight: {flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}");
+            }
+
+            var validationErrors = ValidationHelper.ValidateModel(flight);
+            foreach (var err in validationErrors)
+            {
+                errors.Add($"Flight {flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}: {err}");
+            }
+            return errors;
         }
 
     }
