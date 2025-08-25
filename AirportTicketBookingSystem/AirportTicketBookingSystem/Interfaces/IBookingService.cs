@@ -3,13 +3,8 @@ using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Interfaces
 {
-    public interface IBookingService
+    public interface IBookingService : IService<Booking>
     {
-        Booking GetBookingById(int id);
-        void AddBooking(Booking booking);
-        void UpdateBooking(int id, Booking newBooking);
-        void DeleteBooking(int id);
-        List<Booking> GetAllBookings();
         List<Booking> GetBookingsForPassenger(int passengerId);
         void CancelBooking(int passengerId, int bookingId);
         void UpdateBooking(int passengerId, int bookingId, Booking newBooking);

@@ -2,16 +2,11 @@
 
 namespace AirportTicketBookingSystem.Interfaces
 {
-    public interface IPassengerService
+    public interface IPassengerService : IService<Passenger>
     {
-        Passenger GetPassengerById(int id);
+        void AddPassengerWithBookings(Passenger newPassenger, List<Booking> bookings);
         List<Passenger> GetAllPassengersWithBookings();
         Passenger GetPassengerByIdWithBookings(int id);
         void DeletePassengerWithBookings(int passengerId);
-        void AddPassenger(Passenger passenger);
-        void UpdatePassenger(int id, Passenger newPassenger);
-        void DeletePassenger(int id);
-        List<Passenger> GetAllPassengers();
-        void AddPassengerWithBookings(Passenger newPassenger, List<Booking> bookings);
     }
 }

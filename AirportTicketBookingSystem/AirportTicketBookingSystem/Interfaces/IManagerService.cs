@@ -1,15 +1,9 @@
-﻿using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Models;
+﻿using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Interfaces
 {
-    public interface IManagerService
+    public interface IManagerService : IService<Manager>
     {
-        Manager GetManagerById(int id);
-        List<Manager> GetAllManagers();
-        void AddManager(Manager manager);
-        void UpdateManager(int id, Manager updatedManager);
-        void DeleteManager(int id);
-    }
 
+    }
 }

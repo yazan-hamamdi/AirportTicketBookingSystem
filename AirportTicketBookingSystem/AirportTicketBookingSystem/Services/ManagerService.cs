@@ -3,65 +3,14 @@ using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Services
 {
-    public class ManagerService : IManagerService
+    public class ManagerService : BaseService<Manager>, IManagerService
     {
-        private readonly IManagerRepository _managerRepo;
-        private readonly IBookingRepository _bookingRepo;
+        private readonly IManagerRepository _managerRepository;
 
-        public ManagerService(IManagerRepository managerRepo, IBookingRepository bookRepo)
+        public ManagerService(IManagerRepository managerRepository)
+            : base(managerRepository)
         {
-            _managerRepo = managerRepo;
-            _bookingRepo = bookRepo;
+            _managerRepository = managerRepository;
         }
-
-        public Manager GetManagerById(int id)
-        {
-            try
-            {
-                return _managerRepo.GetById(id);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Manager with Id {id} does not exist");
-            }
-        }
-
-        public List<Manager> GetAllManagers()
-        {
-            return _managerRepo.GetAll();
-        }
-
-        public void AddManager(Manager manager)
-        {
-            if (manager == null) throw new ArgumentNullException(nameof(manager));
-            _managerRepo.Add(manager);
-        }
-
-        public void UpdateManager(int id, Manager updatedManager)
-        {
-            if (updatedManager == null) throw new ArgumentNullException(nameof(updatedManager));
-
-            try
-            {
-                _managerRepo.Update(id, updatedManager);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Cannot update. Manager with Id {id} does not exist");
-            }
-        }
-
-        public void DeleteManager(int id)
-        {
-            try
-            {
-                _managerRepo.Delete(id);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Cannot delete. Manager with Id {id} does not exist");
-            }
-        }
-
     }
 }

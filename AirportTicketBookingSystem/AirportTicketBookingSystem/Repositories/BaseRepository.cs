@@ -7,11 +7,11 @@ using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Repositories
 {
-    public abstract class CsvRepositoryBase<T> : IRepository<T> where T : class, IEntity
+    public abstract class BaseRepository<T> : IRepository<T> where T : class, IEntity
     {
         protected readonly string _filePath;
 
-        public CsvRepositoryBase(string filePath)
+        public BaseRepository(string filePath)
         {
             _filePath = filePath;
         }
@@ -21,7 +21,7 @@ namespace AirportTicketBookingSystem.Repositories
             var records = GetAll();
             var record = records.FirstOrDefault(r => r.Id == id);
             if (record == null)
-                throw new KeyNotFoundException($"Entity with Id {id} not found");
+                throw new KeyNotFoundException($"{typeof(T).Name} with Id {id} not found");
             return record;
         }
 
@@ -57,7 +57,7 @@ namespace AirportTicketBookingSystem.Repositories
             var records = GetAll();
             var index = records.FindIndex(r => r.Id == id);
             if (index == -1)
-                throw new KeyNotFoundException($"Entity with Id {id} not found");
+                throw new KeyNotFoundException($"{typeof(T).Name} with Id {id} not found");
             records[index] = entity;
             Save(records);
         }
@@ -68,7 +68,7 @@ namespace AirportTicketBookingSystem.Repositories
             var selectedRecord = records.FirstOrDefault(b => b.Id == id);
 
             if (selectedRecord == null)
-                throw new KeyNotFoundException($"Entity with Id {id} not found");
+                throw new KeyNotFoundException($"{typeof(T).Name} with Id {id} not found");
 
             records.Remove(selectedRecord);
             Save(records);

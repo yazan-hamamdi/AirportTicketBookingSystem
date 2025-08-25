@@ -4,64 +4,15 @@ using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Services
 {
-    public class BookingService : IBookingService
+    public class BookingService : BaseService<Booking>, IBookingService
     {
-        private readonly IBookingRepository _bookingRepository;
         private readonly IPassengerRepository _passengerRepository;
+        private readonly IBookingRepository _bookingRepository;
 
-        public BookingService(IBookingRepository bookingRepo, IPassengerRepository passengerRepo)
+        public BookingService(IBookingRepository bookingRepo, IPassengerRepository passengerRepo) : base(bookingRepo)
         {
-            _bookingRepository = bookingRepo;
             _passengerRepository = passengerRepo;
-        }
-
-        public Booking GetBookingById(int id)
-        {
-            try
-            {
-                return _bookingRepository.GetById(id);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Booking with Id {id} does not exist");
-            }
-        }
-
-        public void AddBooking(Booking booking)
-        {
-            if (booking == null) throw new ArgumentNullException(nameof(booking));
-            _bookingRepository.Add(booking);
-        }
-
-        public void UpdateBooking(int id, Booking newBooking)
-        {
-            if (newBooking == null) throw new ArgumentNullException(nameof(newBooking));
-
-            try
-            {
-                _bookingRepository.Update(id, newBooking);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Cannot update. Booking with Id {id} does not exist");
-            }
-        }
-
-        public void DeleteBooking(int id)
-        {
-            try
-            {
-                _bookingRepository.Delete(id);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Cannot delete. Booking with Id {id} does not exist");
-            }
-        }
-
-        public List<Booking> GetAllBookings()
-        {
-            return _bookingRepository.GetAll();
+            _bookingRepository = bookingRepo;
         }
 
         public List<Booking> GetBookingsForPassenger(int passengerId)

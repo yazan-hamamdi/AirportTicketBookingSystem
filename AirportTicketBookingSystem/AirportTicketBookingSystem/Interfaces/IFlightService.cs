@@ -3,16 +3,8 @@ using AirportTicketBookingSystem.Models;
 
 namespace AirportTicketBookingSystem.Interfaces
 {
-    public interface IFlightService
+    public interface IFlightService : IService<Flight>
     {
-        Flight GetFlightById(int id);
-        List<Flight> GetAllFlightsWithBookings();
-        Flight GetFlightByIdWithBookings(int id);
-        void DeleteFlightWithBookings(int flightId);
-        void AddFlight(Flight flight);
-        void UpdateFlight(int flightId, Flight newFlight);
-        void DeleteFlight(int id);
-        List<Flight> GetAllFlights();
         void AddFlightWithBookings(Flight newFlight, List<Booking> bookings);
         List<FieldValidationDetail> GetFlightModelValidationDetails();
         List<Flight> SearchAvailableFlights(
@@ -28,5 +20,8 @@ namespace AirportTicketBookingSystem.Interfaces
          );
         List<string> ImportFlightsFromCsv(string csvFilePath);
         bool IsDuplicateFlight(Flight flight, List<Flight> existingFlights);
+        List<Flight> GetAllFlightsWithBookings();
+        Flight GetFlightByIdWithBookings(int id);
+        void DeleteFlightWithBookings(int flightId);
     }
 }

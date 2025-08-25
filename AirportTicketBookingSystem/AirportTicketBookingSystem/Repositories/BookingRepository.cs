@@ -10,7 +10,7 @@ using AirportTicketBookingSystem.Enums;
 
 namespace AirportTicketBookingSystem.Repositories
 {
-    public class BookingRepository : CsvRepositoryBase<Booking>, IBookingRepository
+    public class BookingRepository : BaseRepository<Booking>, IBookingRepository
     {
         public BookingRepository(string filePath) : base(filePath) { }
 

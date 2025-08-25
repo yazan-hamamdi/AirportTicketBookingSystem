@@ -5,27 +5,16 @@ using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Services
 {
-    public class FlightService : IFlightService
+    public class FlightService : BaseService<Flight>, IFlightService
     {
         private readonly IFlightRepository _flightRepository;
         private readonly IBookingRepository _bookingRepository;
 
-        public FlightService(IFlightRepository flightRepo, IBookingRepository bookingRepo)
+        public FlightService(IFlightRepository flightRepository, IBookingRepository bookingRepository)
+            : base(flightRepository)
         {
-            _flightRepository = flightRepo;
-            _bookingRepository = bookingRepo;
-        }
-
-        public Flight GetFlightById(int id)
-        {
-            try
-            {
-                return _flightRepository.GetById(id);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Flight with Id {id} does not exist");
-            }
+            _flightRepository = flightRepository; 
+            _bookingRepository = bookingRepository;
         }
 
         public List<Flight> GetAllFlightsWithBookings()
@@ -54,43 +43,6 @@ namespace AirportTicketBookingSystem.Services
 
             _bookingRepository.DeleteBookings(b => b.FlightId == flightId);
             _flightRepository.Delete(flightId);
-        }
-
-        public void AddFlight(Flight flight)
-        {
-            if (flight == null) throw new ArgumentNullException(nameof(flight));
-            _flightRepository.Add(flight);
-        }
-
-        public void UpdateFlight(int flightId, Flight newFlight)
-        {
-            if (newFlight == null) throw new ArgumentNullException(nameof(newFlight));
-
-            try
-            {
-                _flightRepository.Update(flightId, newFlight);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException("Cannot update. Flight not found");
-            }
-        }
-
-        public void DeleteFlight(int id)
-        {
-            try
-            {
-                _flightRepository.Delete(id);
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new KeyNotFoundException($"Cannot delete. Flight with Id {id} does not exist");
-            }
-        }
-
-        public List<Flight> GetAllFlights()
-        {
-            return _flightRepository.GetAll();
         }
 
         public void AddFlightWithBookings(Flight newFlight, List<Booking> bookings)
@@ -157,7 +109,7 @@ namespace AirportTicketBookingSystem.Services
             if (!importedFlights.Any())
                 throw new ArgumentException("No flights found in the CSV file");
 
-            var existingFlights = GetAllFlights();
+            var existingFlights = GetAll();
             var errors = new List<string>();
 
             foreach (var flight in importedFlights)

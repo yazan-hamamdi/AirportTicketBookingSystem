@@ -3,12 +3,10 @@ using CsvHelper.Configuration;
 using System.Globalization;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.Interfaces;
-using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Utilities;
 
 namespace AirportTicketBookingSystem.Repositories
 {
-    public class FlightRepository : CsvRepositoryBase<Flight>, IFlightRepository
+    public class FlightRepository : BaseRepository<Flight>, IFlightRepository
     {
         public FlightRepository(string filePath) : base(filePath) { }
 
