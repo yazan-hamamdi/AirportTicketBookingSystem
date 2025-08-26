@@ -30,40 +30,6 @@ namespace AirportTicketBookingSystem.Services
                 .ToList();
         }
 
-        public List<Flight> SearchAvailableFlights(string departureCountry = null, string destinationCountry = null,
-            string departureAirport = null, string arrivalAirport = null, DateTime? departureDateFrom = null,
-            DateTime? departureDateTo = null, TravelClass? seatClass = null, decimal? minPrice = null, decimal? maxPrice = null)
-        {
-            var allFlights = _flightRepository.GetAll();
-            var allBookings = _bookingRepository.GetAll();
-
-            FlightBookingUtilities.AttachBookings(allFlights, allBookings);
-
-            var query =
-                from f in allFlights
-                where (string.IsNullOrEmpty(departureCountry) ||
-                       f.DepartureCountry.Equals(departureCountry, StringComparison.OrdinalIgnoreCase))
-                where (string.IsNullOrEmpty(destinationCountry) ||
-                       f.DestinationCountry.Equals(destinationCountry, StringComparison.OrdinalIgnoreCase))
-                where (string.IsNullOrEmpty(departureAirport) ||
-                       f.DepartureAirport.Equals(departureAirport, StringComparison.OrdinalIgnoreCase))
-                where (string.IsNullOrEmpty(arrivalAirport) ||
-                       f.ArrivalAirport.Equals(arrivalAirport, StringComparison.OrdinalIgnoreCase))
-                where (!departureDateFrom.HasValue ||
-                       f.DepartureDate >= departureDateFrom.Value)
-                where (!departureDateTo.HasValue ||
-                       f.DepartureDate <= departureDateTo.Value)
-                where (!seatClass.HasValue ||
-                       f.Bookings.Any(b => b.SeatClass.Name == seatClass.Value))
-                where (!minPrice.HasValue ||
-                       f.Bookings.Any(b => b.SeatClass.CalculatePrice() >= minPrice.Value))
-                where (!maxPrice.HasValue ||
-                       f.Bookings.Any(b => b.SeatClass.CalculatePrice() <= maxPrice.Value))
-                select f;
-
-            return query.ToList();
-        }
-
         public List<string> ImportFlightsFromCsv(string csvFilePath)
         {
             var importedFlights = CsvFileHelper.ReadFromCsv<Flight>(csvFilePath);
