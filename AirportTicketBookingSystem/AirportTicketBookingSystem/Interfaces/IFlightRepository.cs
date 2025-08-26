@@ -5,6 +5,6 @@ namespace AirportTicketBookingSystem.Interfaces
 {
     public interface IFlightRepository : IRepository<Flight>
     {
-        List<Flight> GetAllFromFile(string filePath);
+
     }
 }

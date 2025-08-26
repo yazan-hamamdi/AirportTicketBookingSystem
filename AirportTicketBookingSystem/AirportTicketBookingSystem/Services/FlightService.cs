@@ -17,64 +17,17 @@ namespace AirportTicketBookingSystem.Services
             _bookingRepository = bookingRepository;
         }
 
-        public List<Flight> GetAllFlightsWithBookings()
-        {
-            var flights = _flightRepository.GetAll();
-            var bookings = _bookingRepository.GetAll();
-            FlightBookingUtilities.AttachBookings(flights, bookings);
-            return flights;
-        }
-
-        public Flight GetFlightByIdWithBookings(int id)
-        {
-            var flight = _flightRepository.GetById(id);
-            var bookings = _bookingRepository.GetAll();
-
-            FlightBookingUtilities.AttachBookings(new List<Flight> { flight }, bookings);
-
-            return flight;
-        }
-
-        public void DeleteFlightWithBookings(int flightId)
-        {
-            var flight = _flightRepository.GetById(flightId);
-            if (flight == null)
-                throw new KeyNotFoundException($"Flight with Id {flightId} does not exist");
-
-            _bookingRepository.DeleteBookings(b => b.FlightId == flightId);
-            _flightRepository.Delete(flightId);
-        }
-
-        public void AddFlightWithBookings(Flight newFlight, List<Booking> bookings)
-        {
-            _flightRepository.Add(newFlight);
-
-            if (bookings == null || bookings.Count == 0)
-                throw new ArgumentException("Bookings list cannot be null or empty when adding a flight with bookings");
-
-            foreach (var booking in bookings)
-            {
-                booking.FlightId = newFlight.Id; 
-               _bookingRepository.Add(booking); 
-            }
-        }
-
         public List<FieldValidationDetail> GetFlightModelValidationDetails()
         {
-            var details = new List<FieldValidationDetail>();
-            var properties = typeof(Flight).GetProperties();
-
-            foreach (var prop in properties)
-            {
-                var fieldDetail = new FieldValidationDetail
+            return typeof(Flight)
+                .GetProperties()
+                .Select(prop => new FieldValidationDetail
                 {
                     FieldName = prop.Name,
                     FieldType = prop.PropertyType.Name,
                     Constraints = ValidationMetadataHelper.GetPropertyConstraints(prop)
-                };
-                details.Add(fieldDetail);
-            }
-            return details;
+                })
+                .ToList();
         }
 
         public List<Flight> SearchAvailableFlights(string departureCountry = null, string destinationCountry = null,
@@ -87,24 +40,33 @@ namespace AirportTicketBookingSystem.Services
             FlightBookingUtilities.AttachBookings(allFlights, allBookings);
 
             var query =
-            from f in allFlights
-            where (string.IsNullOrEmpty(departureCountry) || f.DepartureCountry.Equals(departureCountry, StringComparison.OrdinalIgnoreCase))
-            where (string.IsNullOrEmpty(destinationCountry) || f.DestinationCountry.Equals(destinationCountry, StringComparison.OrdinalIgnoreCase))
-            where (string.IsNullOrEmpty(departureAirport) || f.DepartureAirport.Equals(departureAirport, StringComparison.OrdinalIgnoreCase))
-            where (string.IsNullOrEmpty(arrivalAirport) || f.ArrivalAirport.Equals(arrivalAirport, StringComparison.OrdinalIgnoreCase))
-            where (!departureDateFrom.HasValue || f.DepartureDate >= departureDateFrom.Value)
-            where (!departureDateTo.HasValue || f.DepartureDate <= departureDateTo.Value)
-            where (!seatClass.HasValue || f.Bookings.Any(b => b.SeatClass.Name == seatClass.Value))
-            where (!minPrice.HasValue || f.Bookings.Any(b => b.SeatClass.CalculatePrice() >= minPrice.Value))
-            where (!maxPrice.HasValue || f.Bookings.Any(b => b.SeatClass.CalculatePrice() <= maxPrice.Value))
-            select f;
+                from f in allFlights
+                where (string.IsNullOrEmpty(departureCountry) ||
+                       f.DepartureCountry.Equals(departureCountry, StringComparison.OrdinalIgnoreCase))
+                where (string.IsNullOrEmpty(destinationCountry) ||
+                       f.DestinationCountry.Equals(destinationCountry, StringComparison.OrdinalIgnoreCase))
+                where (string.IsNullOrEmpty(departureAirport) ||
+                       f.DepartureAirport.Equals(departureAirport, StringComparison.OrdinalIgnoreCase))
+                where (string.IsNullOrEmpty(arrivalAirport) ||
+                       f.ArrivalAirport.Equals(arrivalAirport, StringComparison.OrdinalIgnoreCase))
+                where (!departureDateFrom.HasValue ||
+                       f.DepartureDate >= departureDateFrom.Value)
+                where (!departureDateTo.HasValue ||
+                       f.DepartureDate <= departureDateTo.Value)
+                where (!seatClass.HasValue ||
+                       f.Bookings.Any(b => b.SeatClass.Name == seatClass.Value))
+                where (!minPrice.HasValue ||
+                       f.Bookings.Any(b => b.SeatClass.CalculatePrice() >= minPrice.Value))
+                where (!maxPrice.HasValue ||
+                       f.Bookings.Any(b => b.SeatClass.CalculatePrice() <= maxPrice.Value))
+                select f;
 
             return query.ToList();
         }
 
         public List<string> ImportFlightsFromCsv(string csvFilePath)
         {
-            var importedFlights = _flightRepository.GetAllFromFile(csvFilePath);
+            var importedFlights = CsvFileHelper.ReadFromCsv<Flight>(csvFilePath);
 
             if (!importedFlights.Any())
                 throw new ArgumentException("No flights found in the CSV file");
@@ -142,19 +104,16 @@ namespace AirportTicketBookingSystem.Services
 
         private List<string> ValidateFlightForImport(Flight flight, List<Flight> existingFlights)
         {
-            var errors = new List<string>();
+            var flightIdentifier = $"{flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}";
 
-            if (IsDuplicateFlight(flight, existingFlights))
-            {
-                errors.Add($"Duplicate flight: {flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}");
-            }
+            var duplicateError = IsDuplicateFlight(flight, existingFlights)
+                ? new[] { $"Duplicate flight: {flightIdentifier}" }
+                : Enumerable.Empty<string>();
 
-            var validationErrors = ValidationHelper.ValidateModel(flight);
-            foreach (var err in validationErrors)
-            {
-                errors.Add($"Flight {flight.DepartureCountry} -> {flight.DestinationCountry} on {flight.DepartureDate}: {err}");
-            }
-            return errors;
+            var validationErrors = ValidationHelper.ValidateModel(flight)
+                .Select(err => $"Flight {flightIdentifier}: {err}");
+
+            return duplicateError.Concat(validationErrors).ToList();
         }
 
     }

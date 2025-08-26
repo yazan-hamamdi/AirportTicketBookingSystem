@@ -9,7 +9,11 @@ namespace AirportTicketBookingSystem.Interfaces
         void CancelBooking(int passengerId, int bookingId);
         void UpdateBooking(int passengerId, int bookingId, Booking newBooking);
         List<Booking> FilterBookingsForManager(int? flightId = null, int? passengerId = null,
-       DateTime? bookingDateFrom = null, DateTime? bookingDateTo = null,
-       TravelClass? seatClass = null, decimal? minPrice = null, decimal? maxPrice = null);
+            DateTime? bookingDateFrom = null,
+            DateTime? bookingDateTo = null,
+            TravelClass? seatClass = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null
+        );
     }
 }

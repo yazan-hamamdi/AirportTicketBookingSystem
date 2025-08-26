@@ -27,17 +27,7 @@ namespace AirportTicketBookingSystem.Repositories
 
         public virtual List<T> GetAll()
         {
-            if (!File.Exists(_filePath))
-                throw new FileNotFoundException("CSV file not found", _filePath);
-
-            using var reader = new StreamReader(_filePath);
-            using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                PrepareHeaderForMatch = args => args.Header.Trim(),
-                MissingFieldFound = null
-            });
-
-            return csv.GetRecords<T>().ToList();
+            return CsvFileHelper.ReadFromCsv<T>(_filePath).ToList();
         }
 
         public virtual void Add(T entity)
@@ -76,9 +66,7 @@ namespace AirportTicketBookingSystem.Repositories
 
         public virtual void Save(List<T> records)
         {
-            using var writer = new StreamWriter(_filePath);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.WriteRecords(records);
+            CsvFileHelper.WriteToCsv(_filePath, records);
         }
     }
 }
