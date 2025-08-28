@@ -16,17 +16,9 @@ namespace AirportTicketBookingSystem.Repositories
 
         public override List<Booking> GetAll()
         {
-            if (!File.Exists(_filePath))
-                throw new FileNotFoundException("CSV file not found", _filePath);
+            var bookingCsvRecords = base.GetAll<BookingCsv>();
 
-            using var reader = new StreamReader(_filePath);
-            using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                PrepareHeaderForMatch = args => args.Header.Trim(),
-                MissingFieldFound = null
-            });
-
-            return csv.GetRecords<BookingCsv>().Select(r => new Booking(
+            return bookingCsvRecords.Select(r => new Booking(
                 r.Id,
                 r.FlightId,
                 r.PassengerId,

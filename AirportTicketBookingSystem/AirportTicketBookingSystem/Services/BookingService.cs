@@ -31,7 +31,7 @@ namespace AirportTicketBookingSystem.Services
             if (booking == null || booking.PassengerId != passengerId)
                 throw new KeyNotFoundException("Booking not found for this passenger");
 
-            _bookingRepository.Delete(bookingId);
+            _repository.Delete(bookingId);
         }
 
         public void UpdateBooking(int passengerId, int bookingId, Booking newBooking)
@@ -40,7 +40,7 @@ namespace AirportTicketBookingSystem.Services
             if (PassengerBooking.PassengerId != passengerId)
                 throw new KeyNotFoundException("Booking not found for this passenger");
 
-            _bookingRepository.Update(bookingId, newBooking);
+            _repository.Update(bookingId, newBooking);
         }
 
         public List<Booking> FilterBookingsForManager(int? flightId = null, int? passengerId = null,

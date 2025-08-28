@@ -68,5 +68,10 @@ namespace AirportTicketBookingSystem.Repositories
         {
             CsvFileHelper.WriteToCsv(_filePath, records);
         }
+
+        public virtual List<TModel> GetAll<TModel>() where TModel : class, new()
+        {
+            return CsvFileHelper.ReadFromCsv<TModel>(_filePath).ToList();
+        }
     }
 }
