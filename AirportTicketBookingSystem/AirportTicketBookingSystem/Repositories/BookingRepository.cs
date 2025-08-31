@@ -48,5 +48,12 @@ namespace AirportTicketBookingSystem.Repositories
 
             return query.ToList();
         }
+
+        public List<Booking> GetByPassengerId(int passengerId)
+        {
+            var allBookings = GetAll();
+            return allBookings.Where(b => b.PassengerId == passengerId).ToList();
+        }
+
     }
 }

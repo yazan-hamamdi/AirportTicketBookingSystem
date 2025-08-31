@@ -14,5 +14,6 @@ namespace AirportTicketBookingSystem.Interfaces
            decimal? minPrice = null,
            decimal? maxPrice = null 
         );
+        List<Booking> GetByPassengerId(int passengerId);
     }
 }

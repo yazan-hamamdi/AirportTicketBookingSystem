@@ -58,5 +58,14 @@ namespace AirportTicketBookingSystem.Services
             );
         }
 
+        public List<Booking> GetBookingsByPassengerId(int passengerId)
+        {
+            var bookings = _bookingRepository.GetByPassengerId(passengerId);
+            if (bookings == null || !bookings.Any())
+                throw new KeyNotFoundException($"No bookings found for passenger with Id {passengerId}");
+
+            return bookings;
+        }
+
     }
 }
