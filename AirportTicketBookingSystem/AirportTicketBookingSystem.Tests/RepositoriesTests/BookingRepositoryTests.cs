@@ -29,8 +29,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             // Arrange
             var csvRecords = _fixture.CreateMany<BookingCsv>(3).ToList();
             _csvMock.Setup(c => c.ReadFromCsv<BookingCsv>(_fakePath)).Returns(csvRecords);
+
             // Act
             var result = _repository.GetAll();
+
             // Assert
             result.Should().HaveCount(3);
             result.Select(r => r.Id).Should().BeEquivalentTo(csvRecords.Select(c => c.Id));
@@ -49,8 +51,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
                                         .With(b => b.PassengerId, 999)
                                         .CreateMany(2));
             _csvMock.Setup(c => c.ReadFromCsv<BookingCsv>(_fakePath)).Returns(csvRecords);
+
             // Act
             var result = _repository.GetByPassengerId(passengerId);
+
             // Assert
             result.Should().OnlyContain(b => b.PassengerId == passengerId);
         }
@@ -88,6 +92,7 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             };
             var records = new List<BookingCsv> { matching, notMatching };
             _csvMock.Setup(c => c.ReadFromCsv<BookingCsv>(_fakePath)).Returns(records);
+
             // Act
             var result = _repository.FilterBookingsForManager(
                 flightId: flightId,
@@ -95,6 +100,7 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
                 bookingDateFrom: bookingDateFrom,
                 bookingDateTo: bookingDateTo
             );
+
             // Assert
             result.Should().NotBeNull();
             result.Should().OnlyContain(b =>

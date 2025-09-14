@@ -15,7 +15,7 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
         private readonly Mock<IBookingRepository> _bookingRepoMock;
         private readonly FlightRepository _repository;
         private readonly Mock<ISeatClassAdapter> _seatClassAdapterMock;
-        private readonly string _fakePath = "fake.csv";
+        private const string _fakePath = "fake.csv";
 
         public FlightRepositoryTests()
         {
@@ -46,8 +46,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             )).ToList();
             _csvMock.Setup(c => c.ReadFromCsv<Flight>(_fakePath)).Returns(flights);
             _bookingRepoMock.Setup(b => b.GetAll()).Returns(bookings);
+
             // Act
             var result = _repository.SearchAvailableFlights();
+
             // Assert
             result.Should().HaveCount(3);
         }
@@ -68,8 +70,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
                 .ToList();
             _csvMock.Setup(c => c.ReadFromCsv<Flight>(_fakePath)).Returns(flights);
             _bookingRepoMock.Setup(b => b.GetAll()).Returns(bookings);
+
             // Act
             var result = _repository.SearchAvailableFlights(departureCountry: "France");
+
             // Assert
             result.Should().ContainSingle(f => f.DepartureCountry == "France");
         }
@@ -90,10 +94,12 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
                 .ToList();
             _csvMock.Setup(c => c.ReadFromCsv<Flight>(_fakePath)).Returns(flights);
             _bookingRepoMock.Setup(b => b.GetAll()).Returns(bookings);
+
             // Act
             var result = _repository.SearchAvailableFlights(
                 departureDateFrom: new DateTime(2025, 10, 1),
                 departureDateTo: new DateTime(2025, 12, 31));
+
             // Assert
             result.Should().ContainSingle(f => f.DepartureDate == new DateTime(2025, 10, 10));
         }

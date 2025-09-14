@@ -29,8 +29,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             var entity = _fixture.Build<TestEntity>().Without(i => i.Id).Create();
             var entities = new List<TestEntity>();
             _csvMock.Setup(c => c.ReadFromCsv<TestEntity>(_fakePath)).Returns(entities);
+
             // Act
             _repository.Add(entity);
+
             // Assert
             entity.Id.Should().BeGreaterThan(0);
             _csvMock.Verify(c => c.WriteToCsv(_fakePath, It.Is<List<TestEntity>>(l => l.Contains(entity))), Times.Once);
@@ -44,8 +46,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             var entities = new List<TestEntity> { entity };
             _csvMock.Setup(c => c.ReadFromCsv<TestEntity>(_fakePath)).Returns(entities);
             var updated = _fixture.Build<TestEntity>().With(e => e.Id, 1).Create();
+
             // Act
             _repository.Update(1, updated);
+
             // Assert
             _csvMock.Verify(c => c.WriteToCsv(_fakePath,
                 It.Is<List<TestEntity>>(l => l.Any(e => e.Id == 1 && e.Name == updated.Name))),
@@ -59,8 +63,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             var entity = _fixture.Build<TestEntity>().With(e => e.Id, 1).Create();
             var entities = new List<TestEntity> { entity };
             _csvMock.Setup(c => c.ReadFromCsv<TestEntity>(_fakePath)).Returns(entities);
+
             // Act
             _repository.Delete(1);
+
             // Assert
             _csvMock.Verify(c => c.WriteToCsv(_fakePath, It.Is<List<TestEntity>>(l => !l.Any())), Times.Once);
         }
@@ -71,8 +77,10 @@ namespace AirportTicketBookingSystem.Tests.RepositoriesTests
             // Arrange
             var entities = _fixture.CreateMany<TestEntity>(3).ToList();
             _csvMock.Setup(c => c.ReadFromCsv<TestEntity>(_fakePath)).Returns(entities);
+
             // Act
             var result = _repository.GetAll();
+
             // Assert
             result.Should().HaveCount(3);
         }
