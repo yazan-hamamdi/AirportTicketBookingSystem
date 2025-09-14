@@ -12,7 +12,7 @@ namespace AirportTicketBookingSystem.Tests.UtilitiesTests
         [InlineData("first", typeof(FirstClass))]
         [InlineData("ECONOMY", typeof(EconomyClass))]
         [InlineData("unknown", typeof(EconomyClass))]
-        public void ToSeatClass_Should_Return_Correct_Type(string input, System.Type expectedType)
+        public void ToSeatClass_ShouldReturn_CorrectType(string input, System.Type expectedType)
         {
             // Act
             var result = input.ToSeatClass();

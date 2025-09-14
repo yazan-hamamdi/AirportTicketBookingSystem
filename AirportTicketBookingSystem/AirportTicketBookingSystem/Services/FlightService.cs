@@ -1,5 +1,4 @@
-﻿using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Interfaces;
+﻿using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.Utilities;
 

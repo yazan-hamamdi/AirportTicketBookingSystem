@@ -7,7 +7,7 @@ namespace AirportTicketBookingSystem.Tests.UtilitiesTests
     public class CsvFileHelperAdapterUnitTests
     {
         [Fact]
-        public void ReadFromCsv_Should_Call_Helper_And_Return_Data()
+        public void ReadFromCsv_ShouldCallHelper_AndReturnData()
         {
             // Arrange
             var mockAdapter = new Mock<ICsvFileHelperAdapter>();
@@ -25,7 +25,7 @@ namespace AirportTicketBookingSystem.Tests.UtilitiesTests
         }
 
         [Fact]
-        public void WriteToCsv_Should_Call_Helper_With_Correct_Data()
+        public void WriteToCsvShouldCallHelper_WithCorrectData()
         {
             // Arrange
             var mockAdapter = new Mock<ICsvFileHelperAdapter>();
