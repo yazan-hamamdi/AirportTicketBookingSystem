@@ -2,6 +2,7 @@
 using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Enums;
 using AirportTicketBookingSystem.Utilities;
+using AirportTicketBookingSystem.Adapters;
 
 namespace AirportTicketBookingSystem.Repositories
 {
@@ -9,8 +10,8 @@ namespace AirportTicketBookingSystem.Repositories
     {
         private readonly IBookingRepository _bookingRepository;
 
-        public FlightRepository(string filePath, IBookingRepository bookingRepository)
-            : base(filePath)
+        public FlightRepository(string filePath, IBookingRepository bookingRepository, ICsvFileHelperAdapter csvHelper)
+            : base(filePath, csvHelper)
         {
             _bookingRepository = bookingRepository;
         }
@@ -53,5 +54,4 @@ namespace AirportTicketBookingSystem.Repositories
             return query.ToList();
         }
     }
-
 }
