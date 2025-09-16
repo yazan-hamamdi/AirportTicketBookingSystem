@@ -13,29 +13,25 @@ env:
 
 jobs:
   build-and-test:
-
-    name: build-and-test-${{matrix.os}}
-    runs-on: ${{ matrix.os}}
+    name: build-and-test-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET Core
+
+    - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install dependencies
-      working-directory: ./AirportTicketBookingSystem
-      run: dotnet restore
-      
+    - name: Restore dependencies
+      run: dotnet restore AirportTicketBookingSystem/AirportTicketBookingSystem/AirportTicketBookingSystem.csproj
+
     - name: Build
-      working-directory: ./AirportTicketBookingSystem
-      run: dotnet build --configuration Release --no-restore
-    
+      run: dotnet build AirportTicketBookingSystem/AirportTicketBookingSystem/AirportTicketBookingSystem.csproj --configuration Release --no-restore
+
     - name: Test
-      working-directory: ./AirportTicketBookingSystem
-      run: dotnet test --no-restore --verbosity normal
-      
+      run: dotnet test AirportTicketBookingSystem/AirportTicketBookingSystem/AirportTicketBookingSystem.csproj --no-build --verbosity normal
