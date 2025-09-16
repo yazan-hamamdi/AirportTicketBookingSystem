@@ -22,6 +22,7 @@ namespace AirportTicketBookingSystem.Services
             {
                 throw new KeyNotFoundException($"{typeof(T).Name} with Id {id} does not exist");
             }
+            Console.WriteLine("sssss");
         }
 
         public virtual List<T> GetAll()
@@ -50,6 +51,7 @@ namespace AirportTicketBookingSystem.Services
             {
                 throw new KeyNotFoundException($"Cannot update. {typeof(T).Name} with Id {id} does not exist");
             }
+            Console.WriteLine("sssss");
         }
 
         public virtual void Delete(int id)
