@@ -80,6 +80,5 @@ namespace AirportTicketBookingSystem.Services
 
             return duplicateError.Concat(validationErrors).ToList();
         }
-
     }
 }

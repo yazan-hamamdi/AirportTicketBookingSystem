@@ -20,7 +20,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetBookingsForPassenger_Found()
+        public void GetBookingsForPassenger_PassengerExists_ReturnsBookings()
         {
             // Arrange
             var passenger = new Passenger { Id = 1, FullName = "yazan" };
@@ -41,7 +41,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetBookingsForPassenger_NotFound()
+        public void GetBookingsForPassenger_PassengerNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             _mockPassengerRepo.Setup(r => r.GetById(1)).Returns((Passenger)null);
@@ -55,7 +55,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void CancelBooking_Found()
+        public void CancelBooking_BookingExists_DeletesBooking()
         {
             // Arrange
             var booking = new Booking { Id = 10, PassengerId = 1 };
@@ -69,7 +69,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void CancelBooking_NotFound()
+        public void CancelBooking_BookingNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             _mockBookingRepo.Setup(r => r.GetById(10)).Returns((Booking)null);
@@ -83,7 +83,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void UpdateBooking_Found()
+        public void UpdateBooking_BookingExists_UpdatesBooking()
         {
             // Arrange
             var oldBooking = new Booking { Id = 10, PassengerId = 1 };
@@ -98,7 +98,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void UpdateBooking_NotFound()
+        public void UpdateBooking_BookingNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             var oldBooking = new Booking { Id = 10, PassengerId = 2 };
@@ -114,7 +114,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetBookingsByPassenger_Found()
+        public void GetBookingsByPassenger_BookingsExist_ReturnsBookings()
         {
             // Arrange
             var bookings = new List<Booking>
@@ -132,7 +132,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetBookingsByPassenger_NotFound()
+        public void GetBookingsByPassenger_BookingsNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             _mockBookingRepo.Setup(r => r.GetByPassengerId(1)).Returns(new List<Booking>());

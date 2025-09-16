@@ -23,7 +23,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetById_Found()
+        public void GetById_EntityExists_ReturnsEntity()
         {
             // Arrange
             var entity = new TestEntity { Id = 1, Name = "yazan" };
@@ -38,7 +38,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetById_NotFound()
+        public void GetById_EntityNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             _mockRepo.Setup(r => r.GetById(1)).Throws<KeyNotFoundException>();
@@ -52,7 +52,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void Add_Null()
+        public void Add_EntityIsNull_ThrowsArgumentNullException()
         {
             // Act
             Action act = () => _service.Add(null);
@@ -62,7 +62,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void Add_Valid()
+        public void Add_EntityIsValid_AddsEntity()
         {
             // Arrange
             var entity = new TestEntity { Id = 1, Name = "Bob" };
@@ -75,7 +75,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void Update_Null()
+        public void Update_EntityIsNull_ThrowsArgumentNullException()
         {
             // Act
             Action act = () => _service.Update(1, null);
@@ -85,7 +85,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void Update_NotFound()
+        public void Update_EntityNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             var entity = new TestEntity { Id = 1, Name = "yazan" };
@@ -100,7 +100,7 @@ namespace AirportTicketBookingSystem.Tests.ServicesTests
         }
 
         [Fact]
-        public void Delete_NotFound()
+        public void Delete_EntityNotFound_ThrowsKeyNotFoundException()
         {
             // Arrange
             _mockRepo.Setup(r => r.Delete(1)).Throws<KeyNotFoundException>();
