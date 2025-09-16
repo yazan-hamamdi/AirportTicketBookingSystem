@@ -12,7 +12,7 @@ public class Booking : IEntity
     public Booking() { }
     
     public Booking(int id,int flightId, int passengerId , DateTime bookingDate, 
-       string seatNumber, ISeatClass seatClass, decimal price)
+        ISeatClass seatClass, decimal price)
     {
        Id = id;
        FlightId = flightId;
@@ -21,6 +21,5 @@ public class Booking : IEntity
        SeatClass = seatClass;
        Price = price;
     }
-
 }
 

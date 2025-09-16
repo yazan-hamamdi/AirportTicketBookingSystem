@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace AirportTicketBookingSystem.Utilities
 {
-    public static class CsvFileHelper
+    public static class CsvFileHelper 
     {
         public static List<T> ReadFromCsv<T>(string filePath)
         {

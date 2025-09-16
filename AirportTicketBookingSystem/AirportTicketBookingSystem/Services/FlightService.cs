@@ -1,5 +1,4 @@
-﻿using AirportTicketBookingSystem.Enums;
-using AirportTicketBookingSystem.Interfaces;
+﻿using AirportTicketBookingSystem.Interfaces;
 using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.Utilities;
 
@@ -81,6 +80,5 @@ namespace AirportTicketBookingSystem.Services
 
             return duplicateError.Concat(validationErrors).ToList();
         }
-
     }
 }

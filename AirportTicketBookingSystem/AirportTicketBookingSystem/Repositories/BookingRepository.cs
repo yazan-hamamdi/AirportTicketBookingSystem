@@ -1,18 +1,16 @@
-﻿using CsvHelper.Configuration;
-using CsvHelper;
-using System.Globalization;
-using AirportTicketBookingSystem.Models;
+﻿using AirportTicketBookingSystem.Models;
 using AirportTicketBookingSystem.DTOs;
 using AirportTicketBookingSystem.Interfaces;
-using System.Linq;
 using AirportTicketBookingSystem.Utilities;
 using AirportTicketBookingSystem.Enums;
+using AirportTicketBookingSystem.Adapters;
 
 namespace AirportTicketBookingSystem.Repositories
 {
     public class BookingRepository : BaseRepository<Booking>, IBookingRepository
     {
-        public BookingRepository(string filePath) : base(filePath) { }
+        public BookingRepository(string filePath, ICsvFileHelperAdapter csvHelper)
+            : base(filePath, csvHelper) { }
 
         public override List<Booking> GetAll()
         {
@@ -23,7 +21,6 @@ namespace AirportTicketBookingSystem.Repositories
                 r.FlightId,
                 r.PassengerId,
                 r.BookingDate,
-                "",
                 r.SeatClass.ToSeatClass(),
                 r.Price
             )).ToList();
